@@ -342,6 +342,66 @@ code {
   color: var(--warn);
 }
 
+/* 5 Whys chain (Socrates) */
+.chain {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+.chain-node {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+}
+.node-problem {
+  border-color: var(--accent);
+  background: linear-gradient(90deg, rgba(110, 168, 254, 0.14), transparent);
+}
+.node-problem .node-label {
+  color: var(--accent);
+}
+.node-label {
+  display: block;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin-bottom: 0.15rem;
+}
+.node-root .node-label {
+  color: var(--ok);
+}
+.node-body {
+  font-size: 0.9rem;
+}
+.node-root {
+  border-color: var(--ok);
+  background: linear-gradient(90deg, rgba(78, 201, 138, 0.16), transparent);
+}
+.why-arrow {
+  align-self: center;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  padding: 0.35rem 0;
+  position: relative;
+}
+.root-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ok);
+  border: 1px solid var(--ok);
+  border-radius: 999px;
+  padding: 0.02rem 0.45rem;
+}
+
 /* ---------- Not found ---------- */
 .notfound {
   max-width: 40rem;
