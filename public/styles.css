@@ -402,6 +402,60 @@ code {
   padding: 0.02rem 0.45rem;
 }
 
+/* Issue tree (Ariadne) */
+.issue-tree {
+  display: flex;
+  overflow: auto;
+  padding: 0.5rem;
+}
+.issue-node {
+  display: flex;
+  align-items: center;
+}
+.issue-box {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+  max-width: 15rem;
+  white-space: normal;
+}
+.issue-node > .issue-box {
+  flex: 0 0 auto;
+}
+/* The root box gets an accent. */
+.issue-tree > .issue-node > .issue-box {
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.issue-children {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 1.6rem;
+  position: relative;
+}
+.issue-children::before {
+  content: "";
+  position: absolute;
+  left: 0.8rem;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--border);
+}
+.issue-children > .issue-node {
+  position: relative;
+}
+.issue-children > .issue-node::before {
+  content: "";
+  position: absolute;
+  left: -0.8rem;
+  top: 50%;
+  width: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
 /* ---------- Not found ---------- */
 .notfound {
   max-width: 40rem;
