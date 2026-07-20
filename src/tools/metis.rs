@@ -6,7 +6,9 @@ use leptos::prelude::*;
 
 const REFERENCE: &str = "https://en.wikipedia.org/wiki/Heuristic";
 
-const CATEGORIES: [&str; 3] = [
+const CATEGORIES: [&str; 5] = [
+    "Mental Models",
+    "Uncertainty & Risk",
     "Design & Code",
     "Systems & Process",
     "Cognition & Decisions",
@@ -18,7 +20,7 @@ struct Heuristic {
     category: &'static str,
 }
 
-static HEURISTICS: [Heuristic; 28] = [
+static HEURISTICS: &[Heuristic] = &[
     Heuristic {
         name: "Occam's Razor",
         tldr: "Prefer the simplest explanation or solution that fits the facts.",
@@ -158,6 +160,168 @@ static HEURISTICS: [Heuristic; 28] = [
         name: "Murphy's Law",
         tldr: "Anything that can go wrong, will — so design for it.",
         category: "Cognition & Decisions",
+    },
+    Heuristic {
+        name: "Confirmation Bias",
+        tldr: "We seek and favour evidence that confirms what we already believe.",
+        category: "Cognition & Decisions",
+    },
+    Heuristic {
+        name: "Availability Heuristic",
+        tldr: "We judge how likely something is by how easily examples come to mind.",
+        category: "Cognition & Decisions",
+    },
+    Heuristic {
+        name: "Loss Aversion",
+        tldr: "A loss hurts about twice as much as an equal gain feels good.",
+        category: "Cognition & Decisions",
+    },
+    Heuristic {
+        name: "Anchoring",
+        tldr: "The first number you hear drags every later estimate toward it.",
+        category: "Cognition & Decisions",
+    },
+    // --- Mental Models: the general-purpose thinking toolkit ---
+    Heuristic {
+        name: "First Principles",
+        tldr: "Reason up from what must be true, not by analogy to what already exists.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Inversion",
+        tldr: "Solve it backwards — ask how you'd guarantee failure, then avoid exactly that.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Second-Order Thinking",
+        tldr: "Ask \"and then what?\" — trace the consequences of the consequences.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Circle of Competence",
+        tldr: "Know the edge of what you actually understand, and operate inside it.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Opportunity Cost",
+        tldr: "The real cost of anything is the best alternative you gave up for it.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Margin of Safety",
+        tldr: "Leave slack between what you expect and what you can actually survive.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Map Is Not the Territory",
+        tldr: "A model is a useful simplification, never the reality it stands in for.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Regression to the Mean",
+        tldr: "Extreme results tend to be followed by more ordinary ones.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Base Rates",
+        tldr: "Anchor on how often something happens in general before trusting this case.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Compounding",
+        tldr: "Small advantages, repeated over time, produce wildly outsized results.",
+        category: "Mental Models",
+    },
+    Heuristic {
+        name: "Incentives",
+        tldr: "Show me the incentive and I'll show you the outcome.",
+        category: "Mental Models",
+    },
+    // --- Uncertainty & Risk: Taleb's toolkit for a world of fat tails ---
+    Heuristic {
+        name: "Antifragility",
+        tldr: "Some things gain from disorder — build systems that get stronger under stress.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Lindy Effect",
+        tldr: "For ideas and tech, what has survived long is likely to survive longer still.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Black Swan",
+        tldr: "Rare, unpredictable, high-impact events dominate history — plan for the unforeseeable.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Barbell Strategy",
+        tldr: "Pair extreme safety with small capped bets on huge upside; avoid the fragile middle.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Skin in the Game",
+        tldr: "Don't trust advice from anyone who bears no cost when they're wrong.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Via Negativa",
+        tldr: "Improve by removing — subtracting harm usually beats adding cleverness.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Optionality",
+        tldr: "Prefer choices that cap your downside but leave the upside open.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Trial and Error",
+        tldr: "Tinkering with cheap, survivable mistakes beats grand top-down prediction.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Ludic Fallacy",
+        tldr: "The tidy odds of games don't model the messy, open risks of real life.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Narrative Fallacy",
+        tldr: "We invent tidy stories for random events, then mistake them for understanding.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Turkey Problem",
+        tldr: "A long run of good days is no proof of safety — until the day it isn't.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Iatrogenics",
+        tldr: "The harm caused by the intervention itself — sometimes doing nothing is best.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Silent Evidence",
+        tldr: "Winners write history; the graveyard of failures is invisible but just as real.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Precautionary Principle",
+        tldr: "Against risks of ruin, the burden of proof is on safety — never bet the irreplaceable.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Seneca's Asymmetry",
+        tldr: "Gains arrive slowly, ruin arrives fast — fragility is a steep one-way cliff.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Convexity",
+        tldr: "Favour payoffs where, for the same shock, the upside outweighs the downside.",
+        category: "Uncertainty & Risk",
+    },
+    Heuristic {
+        name: "Minority Rule",
+        tldr: "A small, intransigent minority can bend the whole system to its preference.",
+        category: "Uncertainty & Risk",
     },
 ];
 
