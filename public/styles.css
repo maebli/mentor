@@ -518,6 +518,52 @@ code {
   font-style: italic;
 }
 
+/* Fishbone / Ishikawa (Cetus) */
+.fishbone {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.fb-spine {
+  stroke: var(--text-dim);
+  stroke-width: 2.5;
+  fill: none;
+}
+.fb-arrow {
+  fill: var(--text-dim);
+}
+.fb-bone {
+  stroke: var(--border);
+  stroke-width: 1.5;
+  fill: none;
+}
+.fb-effect {
+  fill: var(--bg-raised);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+.fb-effect-text {
+  fill: var(--text);
+  font: 600 14px var(--sans);
+}
+.fb-cat {
+  fill: rgba(110, 168, 254, 0.14);
+  stroke: var(--accent);
+  stroke-width: 1;
+}
+.fb-cat-text {
+  fill: var(--text);
+  font: 600 12px var(--sans);
+}
+.fb-cause {
+  fill: var(--text);
+  font: 11px var(--sans);
+}
+.fb-sub {
+  fill: var(--text-dim);
+  font: 10px var(--sans);
+}
+
 /* ---------- Not found ---------- */
 .notfound {
   max-width: 40rem;
