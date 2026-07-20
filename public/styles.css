@@ -456,6 +456,68 @@ code {
   border-top: 1px solid var(--border);
 }
 
+/* Morphological box (Morpheus) */
+.zbox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.zbox-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 11rem) 1fr;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.zbox-param {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.zbox-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.zbox-chip {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.28rem 0.72rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+}
+.zbox-chip:hover {
+  border-color: var(--accent);
+}
+.zbox-chip.sel {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-color: transparent;
+  color: #0e1116;
+  font-weight: 600;
+}
+.zbox-config {
+  margin-top: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  font-size: 0.86rem;
+  color: var(--text-dim);
+}
+.zbox-config-label {
+  color: var(--text-dim);
+}
+.zbox-config-value {
+  color: var(--accent);
+  font-weight: 600;
+}
+.zbox-hint {
+  font-style: italic;
+}
+
 /* ---------- Not found ---------- */
 .notfound {
   max-width: 40rem;
