@@ -1,0 +1,24 @@
+[package]
+name = "mentor"
+version = "0.1.0"
+edition = "2021"
+description = "Mentor — visual planning tools for software design, named after the guides of Greek myth."
+license = "MIT"
+repository = "https://github.com/maebli/mentor"
+
+[dependencies]
+leptos = { version = "0.8", features = ["csr"] }
+fuzzy-matcher = "0.3"
+gloo-storage = "0.3"
+wasm-bindgen = "0.2"
+console_error_panic_hook = "0.1"
+
+[dependencies.web-sys]
+version = "0.3"
+features = ["Window", "Location", "Storage"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
