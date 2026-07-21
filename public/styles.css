@@ -389,16 +389,52 @@ code {
 }
 
 /* ---------- Canvas / visuals ---------- */
+/* The visual pane is a slate "desk"; artifacts are cream index cards on it,
+   matching the Agora board. This palette is scoped to the pane so the rest of
+   the app keeps the ink & gold theme. */
+.pane-visual {
+  --desk-a: #3b4551;
+  --desk-b: #2c333c;
+  --paper: #fbf9f2;
+  --paper-2: #f2eee2;
+  --paper-edge: #cbc0a6;
+  --ink: #26241f;
+  --ink-soft: #6b675c;
+  --rule-red: #cc5148;
+  --rule-green: #4e8a5e;
+  --rule-blue: #c3d3e4;
+  --link: #2b4a73;
+  --card-shadow: 0 6px 15px rgba(15, 20, 26, 0.35);
+  --desk-text: #dde4ec;
+  --desk-dim: #9fb0c0;
+}
 .canvas {
-  padding: 1.25rem;
+  padding: 1.5rem;
   height: 100%;
 }
+.pane-visual > .canvas {
+  background:
+    radial-gradient(1200px 400px at 30% -10%, rgba(255, 255, 255, 0.05), transparent),
+    linear-gradient(160deg, var(--desk-a), var(--desk-b));
+}
 .canvas-empty {
-  color: var(--text-dim);
+  color: var(--desk-dim);
   text-align: center;
   padding: 2.5rem;
   font-size: 0.9rem;
   font-style: italic;
+}
+
+/* Shared "index card" look for artifact nodes on the desk. */
+.chain-node,
+.issue-box,
+.d8-card,
+.zbox {
+  background: var(--paper);
+  color: var(--ink);
+  border: none;
+  border-radius: 3px;
+  box-shadow: var(--card-shadow);
 }
 
 /* CRC cards (Agora) */
@@ -464,55 +500,51 @@ code {
   margin: 0 auto;
 }
 .chain-node {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.7rem 0.95rem;
+  border-top: 3px solid var(--rule-red);
+  padding: 0.55rem 0.85rem 0.7rem;
 }
-.node-problem {
-  border-color: var(--accent);
-  background: var(--accent-wash);
-}
-.node-problem .node-label {
-  color: var(--accent);
+.node-root {
+  border-top-color: var(--rule-green);
 }
 .node-label {
   display: block;
   font-family: var(--mono);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
   margin-bottom: 0.2rem;
 }
-.node-root {
-  border-color: var(--ok);
+.node-problem .node-label {
+  color: var(--rule-red);
 }
 .node-root .node-label {
-  color: var(--ok);
+  color: var(--rule-green);
 }
 .node-body {
-  font-size: 0.92rem;
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  color: var(--ink);
 }
 .why-arrow {
   align-self: center;
-  color: var(--text-dim);
+  color: var(--desk-dim);
   font-family: var(--mono);
   font-size: 0.68rem;
   letter-spacing: 0.06em;
-  padding: 0.4rem 0;
+  padding: 0.45rem 0;
 }
 .root-badge {
   display: inline-block;
   margin-left: 0.5rem;
   font-family: var(--mono);
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--ok);
-  border: 1px solid var(--ok);
+  color: #fff;
+  background: var(--rule-green);
   border-radius: 999px;
-  padding: 0.03rem 0.5rem;
+  padding: 0.05rem 0.55rem;
   vertical-align: middle;
 }
 
@@ -527,21 +559,19 @@ code {
   align-items: center;
 }
 .issue-box {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border-left: 3px solid var(--rule-red);
   padding: 0.45rem 0.7rem;
-  font-size: 0.85rem;
+  font-family: var(--serif);
+  font-size: 0.88rem;
   max-width: 15rem;
 }
 .issue-node > .issue-box {
   flex: 0 0 auto;
 }
 .issue-tree > .issue-node > .issue-box {
-  border-color: var(--accent);
-  font-family: var(--serif);
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-left-width: 5px;
+  font-size: 1rem;
+  font-weight: 700;
 }
 .issue-children {
   display: flex;
@@ -556,7 +586,7 @@ code {
   left: 0.85rem;
   top: 0;
   bottom: 0;
-  border-left: 1px solid var(--border);
+  border-left: 1.5px solid var(--rule-blue);
 }
 .issue-children > .issue-node {
   position: relative;
@@ -567,26 +597,31 @@ code {
   left: -0.85rem;
   top: 50%;
   width: 0.85rem;
-  border-top: 1px solid var(--border);
+  border-top: 1.5px solid var(--rule-blue);
 }
 
-/* Morphological box (Morpheus) */
+/* Morphological box (Morpheus) — one paper worksheet */
 .zbox {
   display: flex;
   flex-direction: column;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 0.4rem 1.1rem 1rem;
+  border-top: 3px solid var(--rule-red);
 }
 .zbox-row {
   display: grid;
   grid-template-columns: minmax(7rem, 11rem) 1fr;
   gap: 0.8rem;
   align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-soft);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--rule-blue);
 }
 .zbox-param {
   font-family: var(--serif);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
+  color: var(--ink);
 }
 .zbox-options {
   display: flex;
@@ -594,9 +629,9 @@ code {
   gap: 0.4rem;
 }
 .zbox-chip {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--paper-edge);
+  color: var(--ink);
   border-radius: 999px;
   padding: 0.28rem 0.75rem;
   font-size: 0.8rem;
@@ -605,36 +640,37 @@ code {
   transition: border-color 0.12s, background 0.12s, color 0.12s;
 }
 .zbox-chip:hover {
-  border-color: var(--accent);
+  border-color: var(--link);
 }
 .zbox-chip.sel {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--bg);
+  background: var(--link);
+  border-color: var(--link);
+  color: #fff;
   font-weight: 600;
 }
 .zbox-config {
   margin-top: 1rem;
-  padding: 0.75rem 0.95rem;
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--accent);
-  border-radius: 6px;
+  padding: 0.7rem 0.9rem;
+  background: var(--paper-2);
+  border: 1px dashed var(--paper-edge);
+  border-left: 3px solid var(--rule-red);
+  border-radius: 4px;
   font-size: 0.88rem;
-  color: var(--text-dim);
+  color: var(--ink-soft);
 }
 .zbox-config-label {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-dim);
+  color: var(--ink-soft);
 }
 .zbox-config-value {
-  color: var(--accent);
+  color: var(--link);
   font-weight: 600;
 }
 .zbox-hint {
-  border-left-color: var(--border);
+  border-left-color: var(--paper-edge);
   font-style: italic;
 }
 
@@ -645,42 +681,42 @@ code {
   display: block;
 }
 .fb-spine {
-  stroke: var(--text-dim);
+  stroke: var(--rule-blue);
   stroke-width: 2.5;
   fill: none;
 }
 .fb-arrow {
-  fill: var(--text-dim);
+  fill: var(--rule-blue);
 }
 .fb-bone {
-  stroke: var(--border);
+  stroke: rgba(195, 211, 228, 0.55);
   stroke-width: 1.5;
   fill: none;
 }
 .fb-effect {
-  fill: var(--accent-wash);
-  stroke: var(--accent);
-  stroke-width: 1.5;
+  fill: var(--paper);
+  stroke: var(--rule-red);
+  stroke-width: 2;
 }
 .fb-effect-text {
-  fill: var(--text);
+  fill: var(--ink);
   font: 600 14px var(--serif);
 }
 .fb-cat {
-  fill: var(--accent-wash);
-  stroke: var(--accent);
-  stroke-width: 1;
+  fill: var(--paper);
+  stroke: var(--rule-red);
+  stroke-width: 1.5;
 }
 .fb-cat-text {
-  fill: var(--text);
+  fill: var(--ink);
   font: 600 12px var(--sans);
 }
 .fb-cause {
-  fill: var(--text);
+  fill: var(--desk-text);
   font: 11px var(--sans);
 }
 .fb-sub {
-  fill: var(--text-dim);
+  fill: var(--desk-dim);
   font: 10px var(--sans);
 }
 
@@ -696,34 +732,44 @@ code {
   grid-template-columns: 2.8rem 1fr;
   gap: 0.85rem;
   align-items: start;
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.6rem 0.75rem;
+  border-left: 4px solid var(--rule-red);
+  padding: 0.6rem 0.8rem;
 }
 .d8-badge {
   font-family: var(--mono);
   font-weight: 700;
-  color: var(--accent);
-  background: var(--accent-wash);
-  border-radius: 5px;
+  color: #fff;
+  background: var(--rule-red);
+  border-radius: 4px;
   text-align: center;
   padding: 0.35rem 0;
 }
 .d8-name {
   font-family: var(--serif);
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
+  color: var(--ink);
   margin-bottom: 0.12rem;
 }
 .d8-body {
-  font-size: 0.85rem;
+  font-size: 0.86rem;
+  color: var(--ink);
 }
 .d8-missing {
-  opacity: 0.5;
+  opacity: 1;
+  border-left-color: var(--paper-edge);
+  box-shadow: none;
+  background: var(--paper-2);
+}
+.d8-missing .d8-badge {
+  background: var(--paper-edge);
+  color: var(--paper-2);
+}
+.d8-missing .d8-name {
+  color: var(--ink-soft);
 }
 .d8-missing .d8-body {
-  color: var(--text-dim);
+  color: var(--ink-soft);
   font-style: italic;
 }
 
