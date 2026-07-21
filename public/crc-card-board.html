@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRC Cards — offline board</title>
+<!-- Classification: internal · GWF Tier 0 personal prototype · runs fully offline, data stays in this browser -->
+<style>
+  :root {
+    --desk:#39424E; --desk-edge:#2E3640; --card:#FBF9F2; --shadow:rgba(15,20,26,.35);
+    --rule:#C3D3E4; --red:#CC5148; --ink:#26241F; --ink-soft:#6B675C;
+    --chip-bg:#EDF2F7; --chip-bd:#B9C9DB; --btn:#2B4A73;
+    --line:rgba(233,238,244,.4); --line-hot:#CC5148;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; }
+  body {
+    display:flex; flex-direction:column;
+    background:linear-gradient(180deg,var(--desk),var(--desk-edge));
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink);
+    overflow:hidden;
+  }
+  header { display:flex; flex-wrap:wrap; align-items:baseline; gap:12px; padding:16px 24px 12px; color:#E8ECF1; flex-shrink:0; }
+  header h1 { margin:0; font-family:Georgia,"Times New Roman",serif; font-weight:400; font-size:24px; }
+  #stats { font-family:ui-monospace,Consolas,monospace; font-size:12px; opacity:.75; }
+  .actions { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
+  .hbtn { background:transparent; color:#DDE5EC; border:1px solid #6B7885; border-radius:6px; padding:8px 14px; font-size:13px; cursor:pointer; }
+  .hbtn.subtle { color:#9AA6B2; border-color:#4A555F; }
+  .hbtn.primary { background:var(--card); color:var(--ink); border:none; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,.3); }
+  #scroll { flex:1; overflow:auto; position:relative; }
+  #world { position:relative; transform-origin:0 0; }
+  #wires { position:absolute; inset:0; pointer-events:none; }
+  .crc-card {
+    position:absolute; width:340px; min-height:230px; display:flex; flex-direction:column;
+    background:var(--card); border-radius:3px; box-shadow:0 6px 16px var(--shadow);
+    cursor:grab; user-select:none; touch-action:none;
+  }
+  .crc-card.sel { box-shadow:0 0 0 3px rgba(255,255,255,.9), 0 8px 20px var(--shadow); }
+  .card-head { display:flex; align-items:center; gap:8px; padding:10px 14px 6px; border-bottom:2px solid var(--red); }
+  .dot { width:14px; height:14px; border-radius:50%; border:1.5px solid rgba(0,0,0,.2); cursor:pointer; padding:0; flex-shrink:0; }
+  .palette { display:flex; gap:8px; padding:8px 14px; border-bottom:1px solid var(--rule); background:rgba(0,0,0,.03); }
+  .palette button { width:18px; height:18px; border-radius:50%; cursor:pointer; padding:0; border:1.5px solid rgba(0,0,0,.15); }
+  .palette button.cur { border:2px solid #26241F; }
+  .card-head input { flex:1; border:none; outline:none; background:transparent; font-family:Georgia,serif; font-size:19px; color:var(--ink); cursor:text; }
+  .xbtn { border:none; background:transparent; color:var(--ink-soft); cursor:pointer; padding:2px 6px; line-height:1; }
+  .cols { display:flex; flex:1; }
+  .col { padding:6px 12px 12px; line-height:26px;
+    background-image:repeating-linear-gradient(180deg,transparent 0,transparent 25px,var(--rule) 25px,var(--rule) 26px); }
+  .col.resp { flex:1.4; } .col.coll { flex:1; }
+  .divider { width:1px; background:var(--rule); }
+  .eyebrow { font-family:ui-monospace,Consolas,monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); }
+  .ritem { display:flex; gap:6px; font-size:13.5px; align-items:baseline; }
+  .ritem span { flex:1; }
+  .ritem .xbtn { font-size:11px; }
+  .col input { width:100%; border:none; outline:none; background:transparent; font-size:13.5px; color:var(--ink); line-height:26px; cursor:text; }
+  .warn { font-size:11.5px; color:var(--red); margin:4px 0 0; line-height:1.4; }
+  .chips { display:flex; flex-wrap:wrap; gap:5px; padding-top:4px; }
+  .chip { display:inline-flex; align-items:center; gap:4px; background:var(--chip-bg); border:1px solid var(--chip-bd); border-radius:4px; padding:1px 7px; font-size:12px; line-height:18px; }
+  .chip .go { border:none; background:transparent; padding:0; font-size:12px; color:var(--ink-soft); cursor:default; }
+  .chip .go.linked { color:var(--btn); text-decoration:underline dotted; cursor:pointer; }
+  .chip .xbtn { font-size:10px; padding:0; }
+  .sugg { display:flex; flex-wrap:wrap; gap:4px; }
+  .sugg button { border:1px dashed var(--chip-bd); background:transparent; border-radius:4px; padding:0 7px; font-size:11.5px; color:var(--btn); cursor:pointer; line-height:18px; }
+  #marquee { position:absolute; border:1.5px dashed var(--red); background:rgba(204,81,72,.08); pointer-events:none; display:none; }
+  #empty { text-align:center; color:#B9C2CC; margin-top:90px; }
+  #empty p.big { font-family:Georgia,serif; font-size:20px; margin:0; }
+  #zoomctl { position:fixed; bottom:20px; right:20px; display:flex; align-items:center; gap:2px; background:#1E242C; border-radius:8px; box-shadow:0 4px 14px rgba(0,0,0,.4); padding:3px; }
+  #zoomctl button { border:none; background:transparent; color:#EDF1F5; height:30px; border-radius:6px; cursor:pointer; }
+  #zoomctl button:hover { background:#333B45; }
+  .zb { width:30px; font-size:16px; } .zfit { width:38px; font-size:12px; } #zpct { width:48px; font-size:12px; font-family:ui-monospace,Consolas,monospace; }
+  #toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1E242C; color:#EDF1F5; padding:10px 18px; border-radius:8px; font-size:13px; box-shadow:0 4px 14px rgba(0,0,0,.4); display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>CRC cards</h1>
+  <span id="stats"></span>
+  <div class="actions">
+    <input type="file" id="fileInput" accept=".json,application/json" style="display:none" aria-label="Import board file">
+    <button class="hbtn" id="btnImport">Import</button>
+    <button class="hbtn" id="btnExport">Export</button>
+    <button class="hbtn" id="btnMd">Copy as Markdown</button>
+    <button class="hbtn" id="btnArrange">Auto-arrange</button>
+    <button class="hbtn subtle" id="btnClear">Clear board</button>
+    <button class="hbtn primary" id="btnAdd">+ New card</button>
+  </div>
+</header>
+
+<div id="scroll">
+  <div id="empty" style="display:none">
+    <p class="big">The desk is empty.</p>
+    <p style="font-size:13px;margin-top:8px">Add a card per candidate class. Collaborator lines appear once names match.</p>
+    <button class="hbtn primary" id="btnAddEmpty" style="margin-top:16px;padding:10px 20px;font-size:14px">+ First card</button>
+  </div>
+  <div id="sizer"><div id="world">
+    <svg id="wires" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(233,238,244,.4)"/>
+        </marker>
+        <marker id="arrHot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC5148"/>
+        </marker>
+      </defs>
+      <g id="wireG"></g>
+    </svg>
+    <div id="cardsLayer"></div>
+    <div id="marquee"></div>
+  </div></div>
+</div>
+
+<div id="zoomctl">
+  <button class="zb" id="zOut" title="Zoom out" aria-label="Zoom out">−</button>
+  <button id="zpct" title="Reset to 100%">100%</button>
+  <button class="zb" id="zIn" title="Zoom in" aria-label="Zoom in">+</button>
+  <button class="zfit" id="zFit" title="Fit all cards in view">Fit</button>
+</div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+const CARD_W = 340, STORE_KEY = "crc-board";
+const COLORS = ["#CC5148", "#3E6FA3", "#4E8A5E", "#C98A2B", "#7C5FA8", "#6B7885"];
+const uid = () => Math.random().toString(36).slice(2, 10);
+
+let cards = [];
+let selected = new Set();
+let zoom = 1;
+let drag = null;      // { sx, sy, z, origins:{id:{x,y}} }
+let marq = null;      // { x1, y1, additive, base:Set }
+let toastTimer = null, saveTimer = null;
+
+const $ = (id) => document.getElementById(id);
+const scrollEl = $("scroll"), world = $("world"), sizer = $("sizer"),
+      wires = $("wires"), wireG = $("wireG"), layer = $("cardsLayer"),
+      marqueeEl = $("marquee"), emptyEl = $("empty");
+
+/* ---------- persistence (localStorage of this browser) ---------- */
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) { const p = JSON.parse(raw); if (Array.isArray(p.cards)) { cards = p.cards; return; } }
+  } catch (e) {}
+  cards = [
+    { id: uid(), name: "Order", responsibilities: ["Know its line items", "Calculate total price", "Track its status"], collaborators: ["LineItem", "Customer"], x: 60, y: 40 },
+    { id: uid(), name: "LineItem", responsibilities: ["Know product and quantity", "Compute line price"], collaborators: [], x: 480, y: 320 },
+    { id: uid(), name: "Customer", responsibilities: ["Know contact details", "Know order history"], collaborators: ["Order"], x: 500, y: 30 },
+  ];
+}
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ cards })); } catch (e) {}
+  }, 400);
+}
+
+/* ---------- helpers ---------- */
+const byId = (id) => cards.find((c) => c.id === id);
+const cardEl = (id) => layer.querySelector('[data-id="' + id + '"]');
+const cardH = (id) => { const el = cardEl(id); return el ? el.offsetHeight : 260; };
+const names = () => cards.map((c) => c.name.trim()).filter(Boolean);
+const findByName = (n) => cards.find((c) => c.name.trim().toLowerCase() === n.trim().toLowerCase());
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.style.display = "none"), 2200);
+}
+function boardCoords(e) {
+  const r = scrollEl.getBoundingClientRect();
+  return { x: (e.clientX - r.left + scrollEl.scrollLeft) / zoom, y: (e.clientY - r.top + scrollEl.scrollTop) / zoom };
+}
+function autoLayout() {
+  const cols = Math.max(1, Math.ceil(Math.sqrt(cards.length)));
+  cards.forEach((c, i) => { c.x = 50 + (i % cols) * (CARD_W + 90); c.y = 40 + Math.floor(i / cols) * 330; });
+}
+
+/* ---------- rendering ---------- */
+function render(refocus) {
+  emptyEl.style.display = cards.length ? "none" : "block";
+  sizer.style.display = cards.length ? "block" : "none";
+  layer.innerHTML = "";
+  for (const c of cards) layer.appendChild(buildCard(c));
+  layoutWorld();
+  renderLines();
+  updateStats();
+  save();
+  if (refocus) {
+    const el = cardEl(refocus.id);
+    const inp = el && el.querySelector('input[data-role="' + refocus.role + '"]');
+    if (inp) inp.focus();
+  }
+}
+function layoutWorld() {
+  const w = Math.max(1200, ...cards.map((c) => c.x + CARD_W + 120), 0);
+  const h = Math.max(700, ...cards.map((c) => c.y + cardH(c.id) + 120), 0);
+  world.style.width = w + "px"; world.style.height = h + "px";
+  world.style.transform = "scale(" + zoom + ")";
+  sizer.style.width = w * zoom + "px"; sizer.style.height = h * zoom + "px";
+  wires.setAttribute("width", w); wires.setAttribute("height", h);
+  $("zpct").textContent = Math.round(zoom * 100) + "%";
+}
+function renderLines() {
+  wireG.innerHTML = "";
+  let count = 0;
+  const center = (c) => ({ cx: c.x + CARD_W / 2, cy: c.y + cardH(c.id) / 2 });
+  const edge = (from, to) => {
+    const w = CARD_W / 2, h = cardH(from.id) / 2, a = center(from), b = center(to);
+    const dx = b.cx - a.cx, dy = b.cy - a.cy;
+    if (!dx && !dy) return { x: a.cx, y: a.cy };
+    const s = Math.min(Math.abs(w / (dx || 1e-6)), Math.abs(h / (dy || 1e-6)));
+    return { x: a.cx + dx * s, y: a.cy + dy * s };
+  };
+  for (const c of cards) for (const n of c.collaborators) {
+    const t = findByName(n);
+    if (!t || t.id === c.id) continue;
+    count++;
+    const hot = selected.has(c.id) || selected.has(t.id);
+    const a = edge(c, t), b = edge(t, c);
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 - 30;
+    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    p.setAttribute("d", "M " + a.x + " " + a.y + " Q " + mx + " " + my + " " + b.x + " " + b.y);
+    p.setAttribute("fill", "none");
+    p.setAttribute("stroke", hot ? "#CC5148" : "rgba(233,238,244,.4)");
+    p.setAttribute("stroke-width", hot ? 2.5 : 1.5);
+    if (!hot) p.setAttribute("stroke-dasharray", "6 5");
+    p.setAttribute("marker-end", hot ? "url(#arrHot)" : "url(#arr)");
+    wireG.appendChild(p);
+  }
+  wireG.dataset.count = count;
+  updateStats();
+}
+function updateStats() {
+  const n = cards.length, l = Number(wireG.dataset.count || 0);
+  $("stats").textContent = n + (n === 1 ? " class" : " classes") + " · " + l + (l === 1 ? " connection" : " connections")
+    + (selected.size > 1 ? " · " + selected.size + " selected" : "")
+    + " · drag empty space to select several · Ctrl+scroll to zoom";
+}
+function applySelection() {
+  layer.querySelectorAll(".crc-card").forEach((el) => el.classList.toggle("sel", selected.has(el.dataset.id)));
+  renderLines();
+}
+
+/* ---------- card DOM ---------- */
+function buildCard(c) {
+  const root = document.createElement("div");
+  root.className = "crc-card" + (selected.has(c.id) ? " sel" : "");
+  root.dataset.id = c.id;
+  root.style.left = c.x + "px"; root.style.top = c.y + "px";
+
+  const head = document.createElement("div"); head.className = "card-head";
+  const col = c.color || COLORS[0];
+  head.style.borderBottomColor = col;
+  const dot = document.createElement("button");
+  dot.className = "dot"; dot.style.background = col;
+  dot.title = "Card color"; dot.setAttribute("aria-label", "Change card color");
+  const palette = document.createElement("div");
+  palette.className = "palette"; palette.style.display = "none";
+  COLORS.forEach((pc) => {
+    const b = document.createElement("button");
+    b.style.background = pc;
+    if (pc === col) b.className = "cur";
+    b.setAttribute("aria-label", "Set card color " + pc);
+    b.addEventListener("click", () => { c.color = pc; render(); });
+    palette.appendChild(b);
+  });
+  dot.addEventListener("click", () => {
+    palette.style.display = palette.style.display === "none" ? "flex" : "none";
+  });
+  const nameIn = document.createElement("input");
+  nameIn.value = c.name; nameIn.placeholder = "Class name"; nameIn.setAttribute("aria-label", "Class name");
+  nameIn.addEventListener("input", () => { c.name = nameIn.value; save(); });
+  nameIn.addEventListener("change", () => render());
+  const del = document.createElement("button"); del.className = "xbtn"; del.textContent = "✕"; del.title = "Remove card";
+  del.addEventListener("click", () => { cards = cards.filter((x) => x.id !== c.id); selected.delete(c.id); render(); });
+  head.append(dot, nameIn, del);
+
+  const cols = document.createElement("div"); cols.className = "cols";
+  const resp = document.createElement("div"); resp.className = "col resp";
+  resp.innerHTML = '<div class="eyebrow">Responsibilities</div>';
+  c.responsibilities.forEach((r, i) => {
+    const row = document.createElement("div"); row.className = "ritem";
+    const sp = document.createElement("span"); sp.textContent = r;
+    const x = document.createElement("button"); x.className = "xbtn"; x.textContent = "✕"; x.setAttribute("aria-label", "Remove responsibility");
+    x.addEventListener("click", () => { c.responsibilities.splice(i, 1); render(); });
+    row.append(sp, x); resp.appendChild(row);
+  });
+  const rIn = document.createElement("input");
+  rIn.placeholder = "Add… (Enter)"; rIn.dataset.role = "resp"; rIn.setAttribute("aria-label", "Add responsibility");
+  const commitR = (refocus) => { const v = rIn.value.trim(); if (!v) return; c.responsibilities.push(v); render(refocus ? { id: c.id, role: "resp" } : null); };
+  rIn.addEventListener("keydown", (e) => { if (e.key === "Enter") commitR(true); });
+  rIn.addEventListener("blur", () => commitR(false));
+  resp.appendChild(rIn);
+  if (c.responsibilities.length > 4) {
+    const w = document.createElement("p"); w.className = "warn";
+    w.textContent = "Getting crowded — a card this full often hides two classes.";
+    resp.appendChild(w);
+  }
+
+  const divider = document.createElement("div"); divider.className = "divider";
+
+  const coll = document.createElement("div"); coll.className = "col coll";
+  coll.innerHTML = '<div class="eyebrow">Collaborators</div>';
+  const chips = document.createElement("div"); chips.className = "chips";
+  c.collaborators.forEach((n) => {
+    const chip = document.createElement("span"); chip.className = "chip";
+    const linked = !!findByName(n);
+    const go = document.createElement("button"); go.className = "go" + (linked ? " linked" : "");
+    go.textContent = n;
+    go.title = linked ? "Go to card" : "No card with this name yet — the line appears once one exists";
+    if (linked) go.addEventListener("click", () => jumpTo(n));
+    const x = document.createElement("button"); x.className = "xbtn"; x.textContent = "✕"; x.setAttribute("aria-label", "Remove collaborator");
+    x.addEventListener("click", () => { c.collaborators = c.collaborators.filter((y) => y !== n); render(); });
+    chip.append(go, x); chips.appendChild(chip);
+  });
+  coll.appendChild(chips);
+  const cIn = document.createElement("input");
+  cIn.placeholder = "Add… (Enter)"; cIn.dataset.role = "coll"; cIn.setAttribute("aria-label", "Add collaborator");
+  const sugg = document.createElement("div"); sugg.className = "sugg";
+  const commitC = (val, refocus) => {
+    const v = (val != null ? val : cIn.value).trim();
+    if (!v || c.collaborators.includes(v)) { cIn.value = ""; sugg.innerHTML = ""; return; }
+    c.collaborators.push(v); cIn.value = "";
+    render(refocus ? { id: c.id, role: "coll" } : null);
+  };
+  cIn.addEventListener("keydown", (e) => { if (e.key === "Enter") commitC(null, true); });
+  cIn.addEventListener("input", () => {
+    sugg.innerHTML = "";
+    const q = cIn.value.trim().toLowerCase();
+    if (!q) return;
+    names()
+      .filter((n) => n.toLowerCase() !== c.name.trim().toLowerCase() && !c.collaborators.includes(n) && n.toLowerCase().startsWith(q))
+      .slice(0, 4)
+      .forEach((n) => {
+        const b = document.createElement("button"); b.textContent = n;
+        b.addEventListener("pointerdown", (e) => e.preventDefault()); // keep focus
+        b.addEventListener("click", () => commitC(n, true));
+        sugg.appendChild(b);
+      });
+  });
+  coll.append(cIn, sugg);
+
+  cols.append(resp, divider, coll);
+  root.append(head, palette, cols);
+
+  /* drag start (multi-select aware) */
+  root.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("input, button")) return;
+    const additive = e.shiftKey || e.ctrlKey || e.metaKey;
+    if (additive) { selected.has(c.id) ? selected.delete(c.id) : selected.add(c.id); }
+    else if (!selected.has(c.id)) { selected = new Set([c.id]); }
+    applySelection();
+    if (!selected.has(c.id)) return;
+    const origins = {};
+    for (const cc of cards) if (selected.has(cc.id)) origins[cc.id] = { x: cc.x, y: cc.y };
+    drag = { sx: e.clientX, sy: e.clientY, z: zoom, origins };
+    e.preventDefault();
+  });
+
+  return root;
+}
+
+function jumpTo(n) {
+  const t = findByName(n);
+  if (!t) return;
+  selected = new Set([t.id]); applySelection();
+  scrollEl.scrollTo({ left: Math.max(0, t.x * zoom - 100), top: Math.max(0, t.y * zoom - 100), behavior: "smooth" });
+}
+
+/* ---------- global pointer handling (drag + marquee) ---------- */
+world.addEventListener("pointerdown", (e) => {
+  if (e.target !== world && e.target !== wires && !wires.contains(e.target)) return;
+  const p = boardCoords(e);
+  marq = { x1: p.x, y1: p.y, additive: e.shiftKey, base: new Set(e.shiftKey ? selected : []) };
+  if (!e.shiftKey) { selected = new Set(); applySelection(); }
+});
+window.addEventListener("pointermove", (e) => {
+  if (drag) {
+    const dx = (e.clientX - drag.sx) / drag.z, dy = (e.clientY - drag.sy) / drag.z;
+    for (const id in drag.origins) {
+      const c = byId(id); if (!c) continue;
+      c.x = Math.max(0, drag.origins[id].x + dx);
+      c.y = Math.max(0, drag.origins[id].y + dy);
+      const el = cardEl(id); if (el) { el.style.left = c.x + "px"; el.style.top = c.y + "px"; }
+    }
+    renderLines();
+  } else if (marq) {
+    const p = boardCoords(e);
+    const minx = Math.min(marq.x1, p.x), maxx = Math.max(marq.x1, p.x);
+    const miny = Math.min(marq.y1, p.y), maxy = Math.max(marq.y1, p.y);
+    Object.assign(marqueeEl.style, { display: "block", left: minx + "px", top: miny + "px", width: (maxx - minx) + "px", height: (maxy - miny) + "px" });
+    selected = new Set(marq.base);
+    for (const c of cards)
+      if (c.x < maxx && c.x + CARD_W > minx && c.y < maxy && c.y + cardH(c.id) > miny) selected.add(c.id);
+    applySelection();
+  }
+});
+window.addEventListener("pointerup", () => {
+  if (drag) { layoutWorld(); save(); }
+  drag = null; marq = null; marqueeEl.style.display = "none";
+});
+
+/* ---------- zoom ---------- */
+const clampZoom = (z) => Math.min(1.5, Math.max(0.3, z));
+function setZoom(z) { zoom = clampZoom(z); layoutWorld(); }
+$("zIn").addEventListener("click", () => setZoom(zoom * 1.15));
+$("zOut").addEventListener("click", () => setZoom(zoom / 1.15));
+$("zpct").addEventListener("click", () => setZoom(1));
+$("zFit").addEventListener("click", () => {
+  if (!cards.length) return;
+  const maxX = Math.max(...cards.map((c) => c.x + CARD_W)) + 60;
+  const maxY = Math.max(...cards.map((c) => c.y + cardH(c.id))) + 60;
+  setZoom(Math.min(scrollEl.clientWidth / maxX, scrollEl.clientHeight / maxY, 1));
+  scrollEl.scrollTo({ left: 0, top: 0 });
+});
+scrollEl.addEventListener("wheel", (e) => {
+  if (!e.ctrlKey && !e.metaKey) return;
+  e.preventDefault();
+  setZoom(zoom * (e.deltaY < 0 ? 1.08 : 0.92));
+}, { passive: false });
+
+/* ---------- toolbar ---------- */
+function addCard() {
+  const c = {
+    id: uid(), name: "", responsibilities: [], collaborators: [],
+    x: scrollEl.scrollLeft / zoom + 80 + (cards.length % 3) * 40,
+    y: scrollEl.scrollTop / zoom + 60 + (cards.length % 3) * 40,
+  };
+  cards.push(c); selected = new Set([c.id]);
+  render();
+  const el = cardEl(c.id); if (el) el.querySelector("input").focus();
+}
+$("btnAdd").addEventListener("click", addCard);
+$("btnAddEmpty").addEventListener("click", addCard);
+$("btnArrange").addEventListener("click", () => { autoLayout(); render(); });
+$("btnClear").addEventListener("click", () => {
+  if (cards.length && !confirm("Remove all cards?")) return;
+  cards = []; selected = new Set(); render();
+});
+$("btnMd").addEventListener("click", async () => {
+  const md = cards.map((c) => {
+    const r = c.responsibilities.map((x) => "- " + x).join("\n") || "- (none yet)";
+    return "## " + (c.name || "Unnamed class") + "\n\n**Responsibilities**\n" + r + "\n\n**Collaborators:** " + (c.collaborators.join(", ") || "(none)") + "\n";
+  }).join("\n");
+  try { await navigator.clipboard.writeText("# CRC cards\n\nClassification: internal\n\n" + md); toast("Copied as Markdown"); }
+  catch (e) { toast("Copy failed — try again"); }
+});
+$("btnExport").addEventListener("click", async () => {
+  const data = JSON.stringify({ format: "crc-board", version: 1, exported: new Date().toISOString(), classification: "internal", cards }, null, 2);
+  try {
+    const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = "crc-board.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast("Exported crc-board.json — check your Downloads folder");
+  } catch (e) {
+    try { await navigator.clipboard.writeText(data); toast("Download blocked — JSON copied to clipboard instead"); }
+    catch (e2) { toast("Export failed in this browser"); }
+  }
+});
+$("btnImport").addEventListener("click", () => $("fileInput").click());
+$("fileInput").addEventListener("change", (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      const list = Array.isArray(parsed) ? parsed : parsed.cards;
+      if (!Array.isArray(list)) throw new Error("no cards");
+      const clean = list.map((c) => ({
+        id: typeof c.id === "string" ? c.id : uid(),
+        name: typeof c.name === "string" ? c.name : "",
+        responsibilities: Array.isArray(c.responsibilities) ? c.responsibilities.filter((x) => typeof x === "string") : [],
+        collaborators: Array.isArray(c.collaborators) ? c.collaborators.filter((x) => typeof x === "string") : [],
+        color: typeof c.color === "string" ? c.color : undefined,
+        x: typeof c.x === "number" ? c.x : undefined,
+        y: typeof c.y === "number" ? c.y : undefined,
+      }));
+      if (cards.length && !confirm("Replace the current " + cards.length + " card(s) with " + clean.length + " imported card(s)?")) { e.target.value = ""; return; }
+      cards = clean;
+      if (cards.some((c) => typeof c.x !== "number")) autoLayout();
+      selected = new Set();
+      render();
+      toast("Imported " + cards.length + " card" + (cards.length === 1 ? "" : "s"));
+    } catch (err) { toast("Import failed — not a valid CRC board file"); }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
+});
+
+/* ---------- go ---------- */
+load();
+render();
+</script>
+</body>
+</html>

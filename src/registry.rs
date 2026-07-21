@@ -72,11 +72,11 @@ pub fn tools() -> &'static [ToolMeta] {
         ToolMeta {
             slug: "agora",
             greek: "Agora",
-            title: "CRC Card Editor",
-            tagline: "Class · Responsibility · Collaborator cards for object design.",
+            title: "CRC Card Board",
+            tagline: "Draggable Class · Responsibility · Collaborator cards for object design.",
             glyph: "🏛️",
             category: Category::Design,
-            tags: &["crc", "class", "responsibility", "collaborator", "oop", "cards"],
+            tags: &["crc", "class", "responsibility", "collaborator", "oop", "cards", "board"],
         },
         ToolMeta {
             slug: "morpheus",
