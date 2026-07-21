@@ -909,6 +909,7 @@ dependencies = [
  "console_error_panic_hook",
  "fuzzy-matcher",
  "gloo-storage",
+ "js-sys",
  "leptos",
  "wasm-bindgen",
  "web-sys",

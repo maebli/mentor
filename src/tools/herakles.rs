@@ -141,7 +141,7 @@ pub fn HeraklesTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE left=left right=right /> }
+    view! { <ToolShell meta=meta reference=REFERENCE text=text left=left right=right /> }
 }
 
 #[cfg(test)]

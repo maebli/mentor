@@ -6,7 +6,30 @@
 use crate::dsl::{ParseIssue, Severity};
 use crate::registry::ToolMeta;
 use gloo_storage::{LocalStorage, Storage};
+use js_sys::{Array, Function, Reflect};
 use leptos::prelude::*;
+use wasm_bindgen::{JsCast, JsValue};
+
+/// Call `window.MentorExport.<method>(...args)` (defined in `public/export.js`).
+/// Resolved at call time so load order with the wasm module doesn't matter; a
+/// no-op if the helper isn't present.
+fn call_export(method: &str, args: &[JsValue]) {
+    let win: JsValue = match web_sys::window() {
+        Some(w) => w.into(),
+        None => return,
+    };
+    let Ok(obj) = Reflect::get(&win, &JsValue::from_str("MentorExport")) else { return };
+    if obj.is_undefined() || obj.is_null() {
+        return;
+    }
+    let Ok(func) = Reflect::get(&obj, &JsValue::from_str(method)) else { return };
+    let Ok(func) = func.dyn_into::<Function>() else { return };
+    let arr = Array::new();
+    for a in args {
+        arr.push(a);
+    }
+    let _ = func.apply(&obj, &arr);
+}
 
 /// A `String` signal that loads from and saves to `localStorage` under `key`.
 ///
@@ -32,11 +55,42 @@ pub fn ToolShell(
     /// Link to a reference explaining the technique (e.g. Wikipedia).
     #[prop(into)]
     reference: String,
+    /// The tool's source text, exported by the "Copy/Save text" buttons.
+    text: RwSignal<String>,
     /// The editor / left side.
     left: AnyView,
     /// The visual / right side.
     right: AnyView,
 ) -> impl IntoView {
+    // The visual is the artifact we rasterise; `.canvas` excludes the toolbar.
+    let sel = ".pane-visual .canvas";
+    let png_name = format!("{}.png", meta.slug);
+    let txt_name = format!("{}.txt", meta.slug);
+
+    let copy_png = move |_| call_export("copyPng", &[JsValue::from_str(sel)]);
+    let save_png = {
+        let png_name = png_name.clone();
+        move |_| {
+            call_export(
+                "downloadPng",
+                &[JsValue::from_str(sel), JsValue::from_str(&png_name)],
+            )
+        }
+    };
+    let copy_txt = move |_| call_export("copyText", &[JsValue::from_str(&text.get_untracked())]);
+    let save_txt = {
+        let txt_name = txt_name.clone();
+        move |_| {
+            call_export(
+                "downloadText",
+                &[
+                    JsValue::from_str(&text.get_untracked()),
+                    JsValue::from_str(&txt_name),
+                ],
+            )
+        }
+    };
+
     view! {
         <div class="tool">
             <header class="tool-head">
@@ -53,7 +107,16 @@ pub fn ToolShell(
             <p class="tool-tagline">{meta.tagline}</p>
             <div class="split">
                 <section class="pane pane-text">{left}</section>
-                <section class="pane pane-visual">{right}</section>
+                <section class="pane pane-visual">
+                    <div class="export-bar">
+                        <button class="exp" on:click=copy_png title="Copy the diagram to the clipboard as a PNG image">"Copy PNG"</button>
+                        <button class="exp" on:click=save_png title="Download the diagram as a PNG image">"Save PNG"</button>
+                        <span class="exp-sep"></span>
+                        <button class="exp" on:click=copy_txt title="Copy the source text to the clipboard">"Copy text"</button>
+                        <button class="exp" on:click=save_txt title="Download the source text">"Save text"</button>
+                    </div>
+                    {right}
+                </section>
             </div>
         </div>
     }

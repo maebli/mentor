@@ -811,6 +811,50 @@ code {
   line-height: 1.45;
 }
 
+/* Export toolbar on the visual pane */
+.pane-visual {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.export-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.export-bar .exp {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  color: var(--text-dim);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.28rem 0.55rem;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+.export-bar .exp:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.export-bar .exp-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  margin: 0 3px;
+}
+.pane-visual > .canvas {
+  height: auto;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
 /* Embedded board tool (Agora) */
 .board-tool {
   display: flex;

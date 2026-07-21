@@ -70,6 +70,7 @@
   .zb { width:30px; font-size:16px; } .zfit { width:38px; font-size:12px; } #zpct { width:48px; font-size:12px; font-family:ui-monospace,Consolas,monospace; }
   #toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1E242C; color:#EDF1F5; padding:10px 18px; border-radius:8px; font-size:13px; box-shadow:0 4px 14px rgba(0,0,0,.4); display:none; }
 </style>
+<script src="export.js"></script>
 </head>
 <body>
 <header>
@@ -80,6 +81,8 @@
     <button class="hbtn" id="btnImport">Import</button>
     <button class="hbtn" id="btnExport">Export</button>
     <button class="hbtn" id="btnMd">Copy as Markdown</button>
+    <button class="hbtn" id="btnPng">Save PNG</button>
+    <button class="hbtn" id="btnCopyPng">Copy PNG</button>
     <button class="hbtn" id="btnArrange">Auto-arrange</button>
     <button class="hbtn subtle" id="btnClear">Clear board</button>
     <button class="hbtn primary" id="btnAdd">+ New card</button>
@@ -475,6 +478,29 @@ $("btnMd").addEventListener("click", async () => {
   }).join("\n");
   try { await navigator.clipboard.writeText("# CRC cards\n\nClassification: internal\n\n" + md); toast("Copied as Markdown"); }
   catch (e) { toast("Copy failed — try again"); }
+});
+// Rasterise the board at 1:1 (ignoring the current zoom) with the desk colour.
+async function boardPng() {
+  if (!window.MentorExport) { toast("Export helper not loaded"); return null; }
+  if (!cards.length) { toast("Board is empty"); return null; }
+  const prev = world.style.transform;
+  world.style.transform = "none";
+  try { return await MentorExport._nodeToBlob(world, { bg: "#39424E", pad: 32 }); }
+  finally { world.style.transform = prev; }
+}
+$("btnPng").addEventListener("click", async () => {
+  const blob = await boardPng();
+  if (blob) { MentorExport._saveBlob(blob, "crc-board.png"); toast("Saved crc-board.png"); }
+  else if (cards.length) toast("Could not render PNG");
+});
+$("btnCopyPng").addEventListener("click", async () => {
+  const blob = await boardPng();
+  if (!blob) return;
+  try {
+    if (!window.ClipboardItem) throw 0;
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    toast("PNG copied to clipboard");
+  } catch (e) { toast("Clipboard blocked — use Save PNG"); }
 });
 $("btnExport").addEventListener("click", async () => {
   const data = JSON.stringify({ format: "crc-board", version: 1, exported: new Date().toISOString(), classification: "internal", cards }, null, 2);
