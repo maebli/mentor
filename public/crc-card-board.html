@@ -160,6 +160,28 @@ const cardEl = (id) => layer.querySelector('[data-id="' + id + '"]');
 const cardH = (id) => { const el = cardEl(id); return el ? el.offsetHeight : 260; };
 const names = () => cards.map((c) => c.name.trim()).filter(Boolean);
 const findByName = (n) => cards.find((c) => c.name.trim().toLowerCase() === n.trim().toLowerCase());
+// Propagate a class rename to every collaborator reference so links survive the
+// rename. Case-insensitive match; de-dupes if the new name already existed on a
+// card. Returns how many cards were updated.
+function renameRefs(from, to, exceptId) {
+  const f = from.trim().toLowerCase();
+  if (!f || f === to.trim().toLowerCase()) return 0;
+  let changed = 0;
+  for (const cc of cards) {
+    if (cc.id === exceptId) continue;
+    let hit = false;
+    const seen = new Set(), out = [];
+    for (const n of cc.collaborators) {
+      const renamed = n.trim().toLowerCase() === f ? to : n;
+      if (renamed !== n) hit = true;
+      const key = renamed.trim().toLowerCase();
+      if (!seen.has(key)) { seen.add(key); out.push(renamed); }
+    }
+    if (hit) changed++;
+    cc.collaborators = out;
+  }
+  return changed;
+}
 function toast(msg) {
   const t = $("toast"); t.textContent = msg; t.style.display = "block";
   clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.style.display = "none"), 2200);
@@ -267,8 +289,19 @@ function buildCard(c) {
   });
   const nameIn = document.createElement("input");
   nameIn.value = c.name; nameIn.placeholder = "Class name"; nameIn.setAttribute("aria-label", "Class name");
+  // Snapshot the name when editing starts so a commit can rewrite references.
+  let nameBefore = c.name;
+  nameIn.addEventListener("focus", () => { nameBefore = c.name; });
   nameIn.addEventListener("input", () => { c.name = nameIn.value; save(); });
-  nameIn.addEventListener("change", () => render());
+  nameIn.addEventListener("change", () => {
+    const from = nameBefore, to = c.name.trim();
+    if (to) {
+      const n = renameRefs(from, to, c.id);
+      if (n) toast("Updated " + n + (n === 1 ? " link to “" : " links to “") + to + "”");
+    }
+    nameBefore = c.name;
+    render();
+  });
   const del = document.createElement("button"); del.className = "xbtn"; del.textContent = "✕"; del.title = "Remove card";
   del.addEventListener("click", () => { cards = cards.filter((x) => x.id !== c.id); selected.delete(c.id); render(); });
   head.append(dot, nameIn, del);
