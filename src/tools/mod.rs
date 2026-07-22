@@ -6,11 +6,14 @@
 
 mod agora;
 mod ariadne;
+mod cassandra;
 mod cetus;
 mod herakles;
 mod metis;
 mod morpheus;
+mod pythia;
 mod socrates;
+mod themis;
 
 use crate::app::NotFound;
 use leptos::prelude::*;
@@ -23,6 +26,9 @@ pub fn route(slug: &str) -> AnyView {
         "socrates" => view! { <socrates::SocratesTool /> }.into_any(),
         "cetus" => view! { <cetus::CetusTool /> }.into_any(),
         "herakles" => view! { <herakles::HeraklesTool /> }.into_any(),
+        "cassandra" => view! { <cassandra::CassandraTool /> }.into_any(),
+        "pythia" => view! { <pythia::PythiaTool /> }.into_any(),
+        "themis" => view! { <themis::ThemisTool /> }.into_any(),
         "metis" => view! { <metis::MetisPage /> }.into_any(),
         other => view! { <NotFound slug=other.to_string() /> }.into_any(),
     }

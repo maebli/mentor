@@ -10,14 +10,17 @@ pub enum Category {
     Design,
     /// Getting to the root of a problem.
     ProblemSolving,
+    /// Deciding and forecasting under uncertainty.
+    Decision,
     /// Things to look up rather than fill in.
     Reference,
 }
 
 impl Category {
-    pub const ORDER: [Category; 3] = [
+    pub const ORDER: [Category; 4] = [
         Category::Design,
         Category::ProblemSolving,
+        Category::Decision,
         Category::Reference,
     ];
 
@@ -25,6 +28,7 @@ impl Category {
         match self {
             Category::Design => "Design & Architecture",
             Category::ProblemSolving => "Problem Solving & Root Cause",
+            Category::Decision => "Decision & Foresight",
             Category::Reference => "Reference",
         }
     }
@@ -122,6 +126,42 @@ pub fn tools() -> &'static [ToolMeta] {
             glyph: "🦁",
             category: Category::ProblemSolving,
             tags: &["8d", "eight disciplines", "quality", "corrective action", "report"],
+        },
+        ToolMeta {
+            slug: "cassandra",
+            greek: "Cassandra",
+            title: "Premortem",
+            tagline: "Imagine the project failed, then list and rank why.",
+            glyph: "🔮",
+            category: Category::Decision,
+            tags: &[
+                "premortem", "prospective hindsight", "risk", "failure", "klein",
+                "kahneman", "assumptions",
+            ],
+        },
+        ToolMeta {
+            slug: "pythia",
+            greek: "Pythia",
+            title: "Reference-Class Forecasting",
+            tagline: "Check your estimate against how similar past projects actually went.",
+            glyph: "📈",
+            category: Category::Decision,
+            tags: &[
+                "reference class", "outside view", "base rate", "planning fallacy",
+                "flyvbjerg", "estimate", "forecast",
+            ],
+        },
+        ToolMeta {
+            slug: "themis",
+            greek: "Themis",
+            title: "Weighted Decision Matrix",
+            tagline: "Score options against weighted criteria to compare them fairly.",
+            glyph: "⚖️",
+            category: Category::Decision,
+            tags: &[
+                "decision matrix", "weighted scoring", "mcda", "criteria", "options",
+                "trade-off", "pugh",
+            ],
         },
         ToolMeta {
             slug: "metis",

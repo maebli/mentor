@@ -834,6 +834,207 @@ code {
   font-style: italic;
 }
 
+/* Premortem risk grid (Cassandra) */
+.pm-board {
+  max-width: 44rem;
+  margin: 0 auto;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 3px;
+  box-shadow: var(--card-shadow);
+  border-top: 3px solid var(--rule-red);
+  padding: 0.9rem 1rem 1rem;
+}
+.pm-outcome {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 600;
+  background: rgba(204, 81, 72, 0.1);
+  border: 1px solid rgba(204, 81, 72, 0.32);
+  border-radius: 4px;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.9rem;
+}
+.pm-grid {
+  display: grid;
+  grid-template-columns: auto repeat(3, 1fr);
+  gap: 4px;
+}
+.pm-axis-x,
+.pm-axis-y {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.pm-axis-x {
+  text-align: center;
+  align-self: end;
+  padding-bottom: 3px;
+}
+.pm-axis-y {
+  text-align: right;
+  align-self: center;
+  padding-right: 6px;
+}
+.pm-cell {
+  min-height: 4.6rem;
+  border: 1px solid var(--paper-edge);
+  border-radius: 3px;
+  padding: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-content: flex-start;
+}
+.pm-sev-high {
+  background: rgba(204, 81, 72, 0.17);
+}
+.pm-sev-med {
+  background: rgba(201, 138, 43, 0.16);
+}
+.pm-sev-low {
+  background: rgba(78, 138, 94, 0.15);
+}
+.pm-chip {
+  background: #fff;
+  border: 1px solid var(--paper-edge);
+  color: var(--ink);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  height: fit-content;
+}
+.pm-unrated {
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+/* Reference-class forecast (Pythia) */
+.fc-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.fc-axis {
+  stroke: var(--rule-blue);
+  stroke-width: 2;
+}
+.fc-tick {
+  fill: var(--desk-dim);
+  font: 10px var(--mono);
+}
+.fc-case {
+  fill: var(--paper);
+  stroke: var(--ink-soft);
+  stroke-width: 1;
+}
+.fc-case-label {
+  fill: var(--desk-text);
+  font: 11px var(--sans);
+}
+.fc-median {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+.fc-median-label {
+  fill: var(--accent);
+  font: 600 11px var(--sans);
+}
+.fc-estimate {
+  stroke: var(--rule-red);
+  fill: var(--rule-red);
+  stroke-width: 2;
+}
+.fc-estimate-label {
+  fill: var(--rule-red);
+  font: 600 11px var(--sans);
+}
+.fc-summary {
+  fill: var(--desk-text);
+  font: 600 13px var(--serif);
+}
+.fc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+.fc-legend-item {
+  font-size: 0.78rem;
+  color: var(--desk-text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+/* Weighted decision matrix (Themis) */
+.dm-table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 46rem;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 3px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+.dm-th {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 2px solid var(--rule-red);
+  text-align: center;
+  vertical-align: bottom;
+}
+.dm-opt-h {
+  text-align: left;
+}
+.dm-total-h {
+  color: var(--ink);
+}
+.dm-weight {
+  display: block;
+  font-size: 0.62rem;
+  color: var(--link);
+  margin-top: 2px;
+}
+.dm-row {
+  border-bottom: 1px solid var(--rule-blue);
+}
+.dm-opt {
+  font-family: var(--serif);
+  font-weight: 600;
+  padding: 0.5rem 0.6rem;
+}
+.dm-score {
+  text-align: center;
+  padding: 0.5rem 0.6rem;
+}
+.dm-total {
+  text-align: center;
+  font-weight: 700;
+  padding: 0.5rem 0.6rem;
+}
+.dm-winner {
+  background: rgba(201, 162, 75, 0.18);
+}
+.dm-winner .dm-total {
+  color: #8a6a15;
+}
+
 /* Heuristics reference (Metis) */
 .metis-page {
   max-width: 1000px;
