@@ -332,7 +332,7 @@ pub fn CetusTool() -> impl IntoView {
     let issues = Signal::derive(move || parsed.get().1);
 
     let left = view! {
-        <EditorPane text=text issues=issues syntax_hint=HINT />
+        <EditorPane text=text issues=issues syntax_hint=HINT keywords=&["effect", "category", "cause"] />
     }
     .into_any();
     let right = view! {

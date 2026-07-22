@@ -359,20 +359,54 @@ code {
   white-space: pre;
   opacity: 0.65;
 }
-.editor-area {
+.code {
+  position: relative;
   flex: 1;
-  resize: none;
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: var(--text);
+  min-height: 0;
+  overflow: hidden;
+}
+/* The highlight <pre> and the textarea must share identical metrics so the
+   coloured text sits exactly under the (transparent) editable text. */
+.highlight,
+.editor-area {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  box-sizing: border-box;
   font-family: var(--mono);
   font-size: 0.88rem;
   line-height: 1.6;
   padding: 0.9rem;
+  border: 0;
   tab-size: 2;
   white-space: pre;
   overflow: auto;
+}
+.highlight {
+  pointer-events: none;
+  color: var(--text);
+  background: transparent;
+}
+.editor-area {
+  resize: none;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
+}
+.editor-area::selection {
+  background: rgba(201, 162, 75, 0.28);
+}
+.hl-keyword {
+  color: var(--accent);
+  font-weight: 600;
+}
+.hl-comment {
+  color: var(--text-dim);
+  font-style: italic;
+}
+.hl-punct {
+  color: var(--text-dim);
 }
 .issues {
   border-top: 1px solid var(--border-soft);

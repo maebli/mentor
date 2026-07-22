@@ -10,6 +10,73 @@ use js_sys::{Array, Function, Reflect};
 use leptos::prelude::*;
 use wasm_bindgen::{JsCast, JsValue};
 
+/// HTML-escape text destined for `inner_html`.
+fn esc(s: &str) -> String {
+    let mut o = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '&' => o.push_str("&amp;"),
+            '<' => o.push_str("&lt;"),
+            '>' => o.push_str("&gt;"),
+            _ => o.push(c),
+        }
+    }
+    o
+}
+
+/// True for an 8D discipline token like `d1` … `d8` (also `d0`).
+fn is_discipline(tok: &str) -> bool {
+    let b = tok.as_bytes();
+    b.len() == 2 && (b[0] == b'd' || b[0] == b'D') && b[1].is_ascii_digit() && b[1] <= b'8'
+}
+
+/// Highlight one line of a tool's text format into HTML spans: `#` comments, a
+/// leading keyword (from `keywords` or a `dN` discipline), and the `:` after it.
+fn highlight_line(line: &str, keywords: &[&str]) -> String {
+    let indent_len = line.len() - line.trim_start().len();
+    let (indent, rest) = line.split_at(indent_len);
+    let mut s = esc(indent);
+    if rest.is_empty() {
+        return s;
+    }
+    if rest.starts_with('#') {
+        s.push_str("<span class=\"hl-comment\">");
+        s.push_str(&esc(rest));
+        s.push_str("</span>");
+        return s;
+    }
+    // The keyword token runs up to the first whitespace or colon.
+    let end = rest
+        .char_indices()
+        .find(|(_, c)| c.is_whitespace() || *c == ':')
+        .map(|(i, _)| i)
+        .unwrap_or(rest.len());
+    let (token, after) = rest.split_at(end);
+    if !token.is_empty() && (keywords.iter().any(|k| *k == token) || is_discipline(token)) {
+        s.push_str("<span class=\"hl-keyword\">");
+        s.push_str(&esc(token));
+        s.push_str("</span>");
+    } else {
+        s.push_str(&esc(token));
+    }
+    if let Some(value) = after.strip_prefix(':') {
+        s.push_str("<span class=\"hl-punct\">:</span>");
+        s.push_str(&esc(value));
+    } else {
+        s.push_str(&esc(after));
+    }
+    s
+}
+
+/// Highlight the whole text, one line at a time (line count is preserved so the
+/// layer stays aligned with the textarea).
+fn highlight_html(text: &str, keywords: &[&str]) -> String {
+    text.split('\n')
+        .map(|l| highlight_line(l, keywords))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 /// Call `window.MentorExport.<method>(...args)` (defined in `public/export.js`).
 /// Resolved at call time so load order with the wasm module doesn't matter; a
 /// no-op if the helper isn't present.
@@ -131,10 +198,15 @@ pub fn EditorPane(
     /// Short syntax reminder shown above the editor.
     #[prop(into)]
     syntax_hint: String,
+    /// Keywords to highlight for this tool's format (e.g. `["problem", "why"]`).
+    #[prop(optional)]
+    keywords: &'static [&'static str],
 ) -> impl IntoView {
     let ta_ref = NodeRef::<leptos::html::Textarea>::new();
     let gutter_ref = NodeRef::<leptos::html::Div>::new();
+    let hl_ref = NodeRef::<leptos::html::Pre>::new();
     let line_count = Memo::new(move |_| text.get().matches('\n').count() + 1);
+    let highlighted = move || highlight_html(&text.get(), keywords);
 
     // Tab inserts two spaces (the DSL's indentation unit) instead of moving
     // focus. `set_range_text` edits the value and caret natively; the textarea is
@@ -151,10 +223,17 @@ pub fn EditorPane(
             }
         }
     };
-    // Keep the line-number gutter aligned with the textarea's vertical scroll.
+    // Keep the gutter and the highlight layer aligned with the textarea's scroll.
     let on_scroll = move |_| {
-        if let (Some(ta), Some(g)) = (ta_ref.get(), gutter_ref.get()) {
-            g.set_scroll_top(ta.scroll_top());
+        if let Some(ta) = ta_ref.get() {
+            let (top, left) = (ta.scroll_top(), ta.scroll_left());
+            if let Some(g) = gutter_ref.get() {
+                g.set_scroll_top(top);
+            }
+            if let Some(h) = hl_ref.get() {
+                h.set_scroll_top(top);
+                h.set_scroll_left(left);
+            }
         }
     };
 
@@ -169,18 +248,22 @@ pub fn EditorPane(
                             .collect_view()
                     }}
                 </div>
-                <textarea
-                    class="editor-area"
-                    node_ref=ta_ref
-                    spellcheck="false"
-                    wrap="off"
-                    autocomplete="off"
-                    autocapitalize="off"
-                    prop:value=text.get_untracked()
-                    on:input=move |ev| text.set(event_target_value(&ev))
-                    on:keydown=on_keydown
-                    on:scroll=on_scroll
-                ></textarea>
+                <div class="code">
+                    // Highlighted text sits behind a transparent-text textarea.
+                    <pre class="highlight" node_ref=hl_ref aria-hidden="true" inner_html=highlighted></pre>
+                    <textarea
+                        class="editor-area"
+                        node_ref=ta_ref
+                        spellcheck="false"
+                        wrap="off"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        prop:value=text.get_untracked()
+                        on:input=move |ev| text.set(event_target_value(&ev))
+                        on:keydown=on_keydown
+                        on:scroll=on_scroll
+                    ></textarea>
+                </div>
             </div>
             <IssueList issues=issues />
         </div>

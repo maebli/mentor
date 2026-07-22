@@ -22,6 +22,7 @@ features = [
     "Storage",
     "Element",
     "HtmlElement",
+    "HtmlPreElement",
     "HtmlTextAreaElement",
     "KeyboardEvent",
 ]

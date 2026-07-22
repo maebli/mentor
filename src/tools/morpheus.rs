@@ -213,7 +213,7 @@ pub fn MorpheusTool() -> impl IntoView {
     let selection = RwSignal::new(HashMap::<usize, usize>::new());
 
     let left = view! {
-        <EditorPane text=text issues=issues syntax_hint=HINT />
+        <EditorPane text=text issues=issues syntax_hint=HINT keywords=&["param", "option"] />
     }
     .into_any();
     let right = view! {
