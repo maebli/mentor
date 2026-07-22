@@ -76,19 +76,33 @@ export default {
  * postMessage (restricted to ALLOWED_ORIGIN) and closes itself.
  */
 function htmlMessage(allowedOrigin, payload) {
-  const body = `<!doctype html><meta charset="utf-8"><title>Connecting…</title>
+  const body = `<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Connecting…</title></head>
+<body style="font-family:system-ui,sans-serif;background:#15120d;color:#ece3d2;padding:2rem;text-align:center">
+<p id="msg">Finishing sign-in…</p>
 <script>
 (function () {
   var payload = ${JSON.stringify(payload)};
-  if (window.opener) {
-    window.opener.postMessage({ source: "mentor-github-oauth", payload: payload }, ${JSON.stringify(
-      allowedOrigin,
-    )});
+  try {
+    if (window.opener) {
+      window.opener.postMessage(
+        { source: "mentor-github-oauth", payload: payload },
+        ${JSON.stringify(allowedOrigin)}
+      );
+    }
+  } catch (e) {}
+  var el = document.getElementById("msg");
+  if (el) {
+    el.textContent = payload.token
+      ? "Connected. You can close this window."
+      : ("Sign-in failed: " + (payload.error || "unknown") + ". You can close this window.");
   }
-  document.body.textContent = payload.token ? "Connected. You can close this window." : "Sign-in failed: " + payload.error;
-  setTimeout(function () { window.close(); }, 400);
+  setTimeout(function () { try { window.close(); } catch (e) {} }, 700);
 })();
-</script>`;
+</script>
+</body>
+</html>`;
   return new Response(body, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8" },

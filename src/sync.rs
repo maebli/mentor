@@ -64,6 +64,26 @@ pub fn token_from_message(origin: &str, data: &JsValue) -> Option<String> {
     Some(token)
 }
 
+/// Accept `owner/repo`, a full `https://github.com/owner/repo(.git)` URL, or
+/// anything in between, and pull out `(owner, repo)`.
+fn parse_repo(input: &str) -> Option<(String, String)> {
+    let mut s = input.trim().trim_end_matches('/');
+    if let Some(rest) = s.rsplit_once("github.com/") {
+        s = rest.1;
+    }
+    let s = s.trim_start_matches("https://").trim_start_matches("http://");
+    let s = s.strip_suffix(".git").unwrap_or(s);
+    let parts: Vec<&str> = s.split('/').filter(|p| !p.is_empty()).collect();
+    if parts.len() >= 2 {
+        let owner = parts[parts.len() - 2].trim();
+        let repo = parts[parts.len() - 1].trim();
+        if !owner.is_empty() && !repo.is_empty() {
+            return Some((owner.to_string(), repo.to_string()));
+        }
+    }
+    None
+}
+
 /// Collect the files to commit: each editor tool's text plus the CRC board JSON.
 fn gather_files() -> Vec<(String, String)> {
     let mut files = Vec::new();
@@ -233,15 +253,10 @@ pub fn GitHubPanel() -> impl IntoView {
         let Some(tok) = token.get_untracked() else { return };
         let r = repo.get_untracked();
         store_repo(&r);
-        let Some((owner, name)) = r.trim().split_once('/') else {
+        let Some((owner, name)) = parse_repo(&r) else {
             status.set("Enter the repo as owner/name (e.g. maebli/mentor-notes).".into());
             return;
         };
-        let (owner, name) = (owner.trim().to_string(), name.trim().to_string());
-        if owner.is_empty() || name.is_empty() {
-            status.set("Enter the repo as owner/name.".into());
-            return;
-        }
         busy.set(true);
         status.set("Committing…".into());
         run(async move {
