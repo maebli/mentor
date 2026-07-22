@@ -132,15 +132,56 @@ pub fn EditorPane(
     #[prop(into)]
     syntax_hint: String,
 ) -> impl IntoView {
+    let ta_ref = NodeRef::<leptos::html::Textarea>::new();
+    let gutter_ref = NodeRef::<leptos::html::Div>::new();
+    let line_count = Memo::new(move |_| text.get().matches('\n').count() + 1);
+
+    // Tab inserts two spaces (the DSL's indentation unit) instead of moving
+    // focus. `set_range_text` edits the value and caret natively; the textarea is
+    // uncontrolled (initial value only) so updating the signal won't reset the
+    // caret.
+    let on_keydown = move |ev: web_sys::KeyboardEvent| {
+        if ev.key() == "Tab" {
+            ev.prevent_default();
+            if let Some(ta) = ta_ref.get() {
+                let start = ta.selection_start().ok().flatten().unwrap_or(0);
+                let _ = ta.set_range_text("  ");
+                let _ = ta.set_selection_range(start + 2, start + 2);
+                text.set(ta.value());
+            }
+        }
+    };
+    // Keep the line-number gutter aligned with the textarea's vertical scroll.
+    let on_scroll = move |_| {
+        if let (Some(ta), Some(g)) = (ta_ref.get(), gutter_ref.get()) {
+            g.set_scroll_top(ta.scroll_top());
+        }
+    };
+
     view! {
         <div class="editor">
             <div class="editor-hint">{syntax_hint}</div>
-            <textarea
-                class="editor-area"
-                spellcheck="false"
-                prop:value=move || text.get()
-                on:input=move |ev| text.set(event_target_value(&ev))
-            ></textarea>
+            <div class="editor-main">
+                <div class="gutter" node_ref=gutter_ref>
+                    {move || {
+                        (1..=line_count.get())
+                            .map(|n| view! { <div class="ln">{n}</div> })
+                            .collect_view()
+                    }}
+                </div>
+                <textarea
+                    class="editor-area"
+                    node_ref=ta_ref
+                    spellcheck="false"
+                    wrap="off"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    prop:value=text.get_untracked()
+                    on:input=move |ev| text.set(event_target_value(&ev))
+                    on:keydown=on_keydown
+                    on:scroll=on_scroll
+                ></textarea>
+            </div>
             <IssueList issues=issues />
         </div>
     }

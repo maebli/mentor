@@ -71,6 +71,28 @@
     var clone = node.cloneNode(true);
     clone.style.overflow = "visible";
     clone.style.margin = "0";
+
+    // Form-control values live as DOM properties, not attributes, so cloneNode
+    // and XMLSerializer drop them (e.g. the CRC board's title inputs). Copy the
+    // live values from the source onto the matching clone nodes so they render.
+    var srcFields = node.querySelectorAll("input, textarea, select");
+    var dstFields = clone.querySelectorAll("input, textarea, select");
+    for (var f = 0; f < srcFields.length; f++) {
+      var src = srcFields[f], dst = dstFields[f];
+      if (!dst) continue;
+      var tag = dst.tagName.toUpperCase();
+      if (tag === "TEXTAREA") {
+        dst.textContent = src.value;
+      } else if (tag === "SELECT") {
+        var opts = dst.querySelectorAll("option");
+        for (var o = 0; o < opts.length; o++) {
+          if (opts[o].value === src.value) opts[o].setAttribute("selected", "selected");
+          else opts[o].removeAttribute("selected");
+        }
+      } else {
+        dst.setAttribute("value", src.value);
+      }
+    }
     var serialized = new XMLSerializer().serializeToString(clone);
 
     var svg =

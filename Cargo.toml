@@ -16,7 +16,15 @@ console_error_panic_hook = "0.1"
 
 [dependencies.web-sys]
 version = "0.3"
-features = ["Window", "Location", "Storage"]
+features = [
+    "Window",
+    "Location",
+    "Storage",
+    "Element",
+    "HtmlElement",
+    "HtmlTextAreaElement",
+    "KeyboardEvent",
+]
 
 [profile.release]
 opt-level = "z"
