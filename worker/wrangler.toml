@@ -1,0 +1,11 @@
+name = "mentor-github-oauth"
+main = "github-oauth.js"
+compatibility_date = "2024-11-01"
+
+# Public app origin allowed to receive the token (not a secret).
+[vars]
+ALLOWED_ORIGIN = "https://maebli.github.io"
+
+# Secrets are NOT stored here. Set them once with:
+#   wrangler secret put GITHUB_CLIENT_ID
+#   wrangler secret put GITHUB_CLIENT_SECRET
