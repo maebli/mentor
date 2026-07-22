@@ -237,6 +237,93 @@ code {
   text-align: center;
   padding: 2.5rem;
 }
+/* GitHub sync panel */
+.gh-panel {
+  max-width: 640px;
+  margin: 3.5rem auto 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-raised);
+  padding: 1rem 1.15rem 1.15rem;
+}
+.gh-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+.gh-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+.gh-note {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin: 0.2rem 0 0.85rem;
+  line-height: 1.5;
+}
+.gh-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.gh-input {
+  flex: 1;
+  padding: 0.55rem 0.7rem;
+  background: var(--bg-pane);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  outline: none;
+}
+.gh-input:focus {
+  border-color: var(--accent);
+}
+.gh-btn {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.gh-btn:hover {
+  background: var(--accent-2);
+}
+.gh-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.gh-link {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+  margin-top: 0.7rem;
+  display: inline-block;
+}
+.gh-link:hover {
+  color: var(--accent);
+}
+.gh-status {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  margin-top: 0.7rem;
+  color: var(--text);
+  word-break: break-all;
+}
+
 .home-foot {
   text-align: center;
   color: var(--text-dim);

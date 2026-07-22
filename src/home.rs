@@ -90,6 +90,7 @@ pub fn Home() -> impl IntoView {
                 />
             </header>
             <div class="catalogue">{results}</div>
+            <crate::sync::GitHubPanel />
             <footer class="home-foot">
                 <span>"Built in Rust · Leptos · WebAssembly"</span>
             </footer>

@@ -2,6 +2,7 @@ mod app;
 mod dsl;
 mod home;
 mod registry;
+mod sync;
 mod tools;
 mod ui;
 
