@@ -164,6 +164,19 @@ pub fn tools() -> &'static [ToolMeta] {
             ],
         },
         ToolMeta {
+            slug: "tyche",
+            greek: "Tyche",
+            title: "Probabilistic Estimate",
+            tagline: "Model each task as an uncertain range, then convolve them into one total with confidence intervals.",
+            glyph: "🎲",
+            category: Category::Decision,
+            tags: &[
+                "estimate", "estimation", "guesstimate", "monte carlo", "convolution",
+                "probability", "distribution", "uncertainty", "risk", "pert", "confidence",
+                "percentile", "range", "three point",
+            ],
+        },
+        ToolMeta {
             slug: "metis",
             greek: "Metis",
             title: "Heuristics",

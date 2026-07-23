@@ -1274,6 +1274,73 @@ code {
   display: block;
 }
 
+/* Probabilistic estimate (Tyche) */
+.ty-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.ty-summary {
+  fill: var(--desk-text);
+  font: 600 13px var(--serif);
+}
+.ty-band {
+  fill: var(--accent);
+  opacity: 0.1;
+}
+.ty-band-label {
+  fill: var(--desk-dim);
+  font: 10px var(--mono);
+}
+.ty-bar {
+  fill: var(--accent);
+  fill-opacity: 0.88;
+}
+.ty-cdf {
+  fill: none;
+  stroke: var(--rule-blue);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ty-axis {
+  stroke: var(--desk-dim);
+  stroke-width: 1.2;
+}
+.ty-tick {
+  fill: var(--desk-dim);
+  font: 10px var(--mono);
+}
+.ty-axis-title {
+  fill: var(--desk-dim);
+  font: 11px var(--sans);
+}
+.ty-p50 {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+.ty-p50-label {
+  fill: var(--accent);
+  font: 600 11px var(--sans);
+}
+.ty-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+.ty-legend-item {
+  font-size: 0.78rem;
+  color: var(--desk-text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
 /* ---------- Not found ---------- */
 .notfound {
   max-width: 40rem;

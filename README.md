@@ -23,6 +23,10 @@ saved locally in your browser.
 | **Socrates** ❓ | [5 Whys](https://en.wikipedia.org/wiki/Five_whys) | Iterative root-cause questioning |
 | **Cetus** 🐟 | [Ishikawa diagram](https://en.wikipedia.org/wiki/Ishikawa_diagram) | Fishbone cause-and-effect analysis |
 | **Herakles** 🦁 | [8D report](https://en.wikipedia.org/wiki/Eight_disciplines_problem_solving) | Eight disciplines of problem solving |
+| **Cassandra** 🔮 | [Premortem](https://en.wikipedia.org/wiki/Pre-mortem) | Imagine the failure, then rank why |
+| **Pythia** 📈 | [Reference-class forecasting](https://en.wikipedia.org/wiki/Reference_class_forecasting) | Estimate against how similar projects went |
+| **Themis** ⚖️ | [Weighted decision matrix](https://en.wikipedia.org/wiki/Decision-matrix_method) | Score options against weighted criteria |
+| **Tyche** 🎲 | [Probabilistic estimate](https://en.wikipedia.org/wiki/Convolution_of_probability_distributions) | Convolve uncertain task ranges into one total |
 | **Metis** 🦉 | [Heuristics](https://en.wikipedia.org/wiki/Heuristic) | Visual reference of rules of thumb |
 
 The front page lists everything, grouped by category, with fuzzy search.

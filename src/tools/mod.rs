@@ -14,6 +14,7 @@ mod morpheus;
 mod pythia;
 mod socrates;
 mod themis;
+mod tyche;
 
 use crate::app::NotFound;
 use leptos::prelude::*;
@@ -29,6 +30,7 @@ pub fn route(slug: &str) -> AnyView {
         "cassandra" => view! { <cassandra::CassandraTool /> }.into_any(),
         "pythia" => view! { <pythia::PythiaTool /> }.into_any(),
         "themis" => view! { <themis::ThemisTool /> }.into_any(),
+        "tyche" => view! { <tyche::TycheTool /> }.into_any(),
         "metis" => view! { <metis::MetisPage /> }.into_any(),
         other => view! { <NotFound slug=other.to_string() /> }.into_any(),
     }
