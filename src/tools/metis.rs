@@ -87,6 +87,11 @@ static HEURISTICS: &[Heuristic] = &[
         category: "Design & Code",
     },
     Heuristic {
+        name: "SMART Goals",
+        tldr: "A goal you can act on is Specific, Measurable, Achievable, Relevant and Time-bound.",
+        category: "Systems & Process",
+    },
+    Heuristic {
         name: "Conway's Law",
         tldr: "Systems mirror the communication structure of the organization that builds them.",
         category: "Systems & Process",

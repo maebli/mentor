@@ -177,6 +177,18 @@ pub fn tools() -> &'static [ToolMeta] {
             ],
         },
         ToolMeta {
+            slug: "artemis",
+            greek: "Artemis",
+            title: "SMART Goals",
+            tagline: "Write a goal, then have each of the five SMART criteria graded by heuristics.",
+            glyph: "🏹",
+            category: Category::Decision,
+            tags: &[
+                "smart", "goal", "goals", "objective", "okr", "specific", "measurable",
+                "achievable", "relevant", "time-bound", "target", "planning",
+            ],
+        },
+        ToolMeta {
             slug: "metis",
             greek: "Metis",
             title: "Heuristics",
@@ -184,6 +196,19 @@ pub fn tools() -> &'static [ToolMeta] {
             glyph: "🦉",
             category: Category::Reference,
             tags: &["heuristic", "rules of thumb", "principles", "biases", "wisdom"],
+        },
+        ToolMeta {
+            slug: "psyche",
+            greek: "Psyche",
+            title: "Personality & Generations",
+            tagline: "The sixteen types on a spider chart — and the generational cohorts plotted beside them.",
+            glyph: "🧠",
+            category: Category::Reference,
+            tags: &[
+                "personality", "16 personalities", "mbti", "myers briggs", "type", "introvert",
+                "extravert", "spider", "radar", "chart", "generation", "generations", "boomer",
+                "gen x", "millennial", "gen z", "gen alpha", "cohort", "team",
+            ],
         },
     ]
 }

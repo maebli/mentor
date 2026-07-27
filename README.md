@@ -27,7 +27,9 @@ saved locally in your browser.
 | **Pythia** 📈 | [Reference-class forecasting](https://en.wikipedia.org/wiki/Reference_class_forecasting) | Estimate against how similar projects went |
 | **Themis** ⚖️ | [Weighted decision matrix](https://en.wikipedia.org/wiki/Decision-matrix_method) | Score options against weighted criteria |
 | **Tyche** 🎲 | [Probabilistic estimate](https://en.wikipedia.org/wiki/Convolution_of_probability_distributions) | Convolve uncertain task ranges into one total |
+| **Artemis** 🏹 | [SMART goals](https://en.wikipedia.org/wiki/SMART_criteria) | Grade each criterion of a goal with heuristics |
 | **Metis** 🦉 | [Heuristics](https://en.wikipedia.org/wiki/Heuristic) | Visual reference of rules of thumb |
+| **Psyche** 🧠 | [16 personality types](https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator) | Spider chart of the types, plus the generations |
 
 The front page lists everything, grouped by category, with fuzzy search.
 

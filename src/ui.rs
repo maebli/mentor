@@ -98,6 +98,19 @@ fn call_export(method: &str, args: &[JsValue]) {
     let _ = func.apply(&obj, &arr);
 }
 
+/// Copy the element matched by `selector` to the clipboard as a PNG.
+pub fn copy_png(selector: &str) {
+    call_export("copyPng", &[JsValue::from_str(selector)]);
+}
+
+/// Download the element matched by `selector` as a PNG called `filename`.
+pub fn download_png(selector: &str, filename: &str) {
+    call_export(
+        "downloadPng",
+        &[JsValue::from_str(selector), JsValue::from_str(filename)],
+    );
+}
+
 /// A `String` signal that loads from and saves to `localStorage` under `key`.
 ///
 /// Used so a user's work in each tool survives a page reload. The initial value
@@ -134,15 +147,10 @@ pub fn ToolShell(
     let png_name = format!("{}.png", meta.slug);
     let txt_name = format!("{}.txt", meta.slug);
 
-    let copy_png = move |_| call_export("copyPng", &[JsValue::from_str(sel)]);
-    let save_png = {
+    let on_copy_png = move |_| copy_png(sel);
+    let on_save_png = {
         let png_name = png_name.clone();
-        move |_| {
-            call_export(
-                "downloadPng",
-                &[JsValue::from_str(sel), JsValue::from_str(&png_name)],
-            )
-        }
+        move |_| download_png(sel, &png_name)
     };
     let copy_txt = move |_| call_export("copyText", &[JsValue::from_str(&text.get_untracked())]);
     let save_txt = {
@@ -176,8 +184,8 @@ pub fn ToolShell(
                 <section class="pane pane-text">{left}</section>
                 <section class="pane pane-visual">
                     <div class="export-bar">
-                        <button class="exp" on:click=copy_png title="Copy the diagram to the clipboard as a PNG image">"Copy PNG"</button>
-                        <button class="exp" on:click=save_png title="Download the diagram as a PNG image">"Save PNG"</button>
+                        <button class="exp" on:click=on_copy_png title="Copy the diagram to the clipboard as a PNG image">"Copy PNG"</button>
+                        <button class="exp" on:click=on_save_png title="Download the diagram as a PNG image">"Save PNG"</button>
                         <span class="exp-sep"></span>
                         <button class="exp" on:click=copy_txt title="Copy the source text to the clipboard">"Copy text"</button>
                         <button class="exp" on:click=save_txt title="Download the source text">"Save text"</button>

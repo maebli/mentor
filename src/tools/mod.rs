@@ -6,11 +6,13 @@
 
 mod agora;
 mod ariadne;
+mod artemis;
 mod cassandra;
 mod cetus;
 mod herakles;
 mod metis;
 mod morpheus;
+mod psyche;
 mod pythia;
 mod socrates;
 mod themis;
@@ -31,7 +33,9 @@ pub fn route(slug: &str) -> AnyView {
         "pythia" => view! { <pythia::PythiaTool /> }.into_any(),
         "themis" => view! { <themis::ThemisTool /> }.into_any(),
         "tyche" => view! { <tyche::TycheTool /> }.into_any(),
+        "artemis" => view! { <artemis::ArtemisTool /> }.into_any(),
         "metis" => view! { <metis::MetisPage /> }.into_any(),
+        "psyche" => view! { <psyche::PsychePage /> }.into_any(),
         other => view! { <NotFound slug=other.to_string() /> }.into_any(),
     }
 }
