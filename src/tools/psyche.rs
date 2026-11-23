@@ -14,8 +14,6 @@
 use crate::registry;
 use leptos::prelude::*;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator";
-
 /// How many profiles can be overlaid before the chart turns to spaghetti.
 const MAX_SERIES: usize = 4;
 
@@ -616,8 +614,8 @@ pub fn PsychePage() -> impl IntoView {
                 <a class="back" href="#/">"← Mentor"</a>
                 <h1>{meta.glyph}" "{meta.greek}</h1>
                 <p class="psy-sub">{meta.tagline}</p>
-                <a class="reference" href=REFERENCE target="_blank" rel="noreferrer">
-                    "reference ↗"
+                <a class="reference" href=meta.wikipedia_url() target="_blank" rel="noreferrer">
+                    "Wikipedia ↗"
                 </a>
             </header>
 

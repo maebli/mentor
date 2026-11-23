@@ -29,6 +29,7 @@ features = [
     "HtmlPreElement",
     "HtmlTextAreaElement",
     "KeyboardEvent",
+    "PointerEvent",
     "MessageEvent",
 ]
 

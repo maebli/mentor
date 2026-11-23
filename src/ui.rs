@@ -138,9 +138,7 @@ pub fn use_persisted(key: &'static str, default: &str) -> RwSignal<String> {
 #[component]
 pub fn ToolShell(
     meta: &'static ToolMeta,
-    /// Link to a reference explaining the technique (e.g. Wikipedia).
-    #[prop(into)]
-    reference: String,
+    #[prop(optional)] method_reference: Option<&'static str>,
     plans: Plans,
     /// The editor / left side.
     left: AnyView,
@@ -169,9 +167,12 @@ pub fn ToolShell(
         <main class="tool" class:preview-open=move || show_preview.get()>
             <header class="tool-head">
                 <a class="back" href="#/">"← Tool library"</a>
-                <a class="reference" href=reference target="_blank" rel="noreferrer">
-                    "Method reference ↗"
-                </a>
+                <nav class="method-links" aria-label="Further reading">
+                    <a class="reference" href=meta.wikipedia_url() target="_blank" rel="noreferrer">"Wikipedia ↗"</a>
+                    {method_reference.map(|url| view! {
+                        <a class="reference" href=url target="_blank" rel="noreferrer">"Method reference ↗"</a>
+                    })}
+                </nav>
             </header>
             <div class="workspace-title">
                 <span class="technique">{meta.greek}" / "{meta.category.title()}</span>

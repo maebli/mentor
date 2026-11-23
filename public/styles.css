@@ -2098,3 +2098,211 @@ code {
     width: 100%;
   }
 }
+
+.schedule-sheet, .kanban-lane {
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--card-shadow);
+  overflow-wrap: anywhere;
+}
+.schedule-sheet {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 1.8rem);
+}
+.schedule-sheet h2, .kanban-lane h2 {
+  margin: 0;
+  font: 600 1.55rem/1.15 var(--serif);
+}
+.schedule-sheet > p, .kanban-lane > p, .quorum-row p {
+  margin: 0.5rem 0 1rem;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+.schedule-sheet ol, .schedule-sheet ul, .kanban-lane ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.schedule-row, .quorum-row {
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--paper-edge);
+}
+.schedule-label, .kanban-moves {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.schedule-label span, .schedule-time, .agenda-entry time, .agenda-entry span {
+  color: var(--ink-soft);
+  font: 0.75rem var(--mono);
+}
+.schedule-label span {
+  flex-shrink: 0;
+}
+.schedule-track {
+  position: relative;
+  margin: 0.55rem 0 0.4rem;
+  height: 0.55rem;
+  background: #e0e3d6;
+  border-radius: 1rem;
+}
+.schedule-track span {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  min-width: 2px;
+  background: #57826b;
+  border-radius: inherit;
+}
+.critical .schedule-track span {
+  background: #9a482f;
+}
+.critical .schedule-label span {
+  color: #893b28;
+}
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  align-items: start;
+  gap: 0.7rem;
+}
+.kanban-lane {
+  padding: 0.85rem;
+  background: var(--paper-2);
+  border-top: 4px solid #799e86;
+}
+.kanban-lane h2 {
+  font-size: 1.2rem;
+}
+.kanban-lane > p {
+  margin-block: 0.25rem 0.75rem;
+}
+.kanban-lane li {
+  padding: 0.7rem;
+  margin-top: 0.45rem;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+.kanban-moves {
+  margin-top: 0.45rem;
+  justify-content: flex-end;
+}
+.kanban-moves button {
+  min-width: 2.25rem;
+  min-height: 2rem;
+  border: 1px solid var(--paper-edge);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.kanban-moves button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.mentor-export-root .kanban-moves {
+  display: none;
+}
+.agenda-entry {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.8rem;
+  align-items: baseline;
+  background: var(--paper-2);
+  border-left: 3px solid #57826b;
+  margin-bottom: 0.35rem;
+  padding: 0.65rem;
+}
+.agenda-entry span {
+  grid-column: 2;
+}
+.agenda-gap {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  margin: 0.4rem 0 0.4rem 0.65rem;
+}
+.quorum-row h3 {
+  font: 600 1.15rem var(--serif);
+  margin: 0;
+}
+.quorum-row p, .quorum-row div {
+  margin: 0.3rem 0;
+  font-size: 0.85rem;
+}
+
+.method-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem 1rem;
+  margin-left: auto;
+}
+.method-links .reference {
+  margin: 0;
+}
+.kanban-lane {
+  min-height: 7rem;
+  align-self: stretch;
+}
+.kanban-lane li {
+  position: relative;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.kanban-lane li.dragging {
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.88;
+  box-shadow: var(--card-shadow);
+}
+.kanban-lane.drop-ready {
+  outline: 3px dashed #a3d6b1;
+  outline-offset: 2px;
+}
+.kanban-lane.drop-full {
+  outline: 3px dashed #e9a27c;
+  outline-offset: 2px;
+}
+
+.cohort-sheet {
+  width: max-content;
+  min-width: min(100%, 25rem);
+  max-width: none;
+}
+.cohort-sheet > p {
+  max-width: 32rem;
+}
+.cohort-sheet table {
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+.cohort-sheet th, .cohort-sheet td {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--paper-edge);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.cohort-sheet th:first-child {
+  text-align: left;
+}
+
+.encoded-preview {
+  overflow-wrap: anywhere;
+}
+.codebook {
+  border-collapse: collapse;
+  width: 100%;
+}
+.codebook th, .codebook td {
+  border-bottom: 1px solid var(--paper-edge);
+  padding: 0.4rem 0.65rem;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}

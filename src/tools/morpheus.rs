@@ -22,8 +22,6 @@ use crate::ui::{EditorPane, ToolShell};
 use leptos::prelude::*;
 use std::collections::HashMap;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/Morphological_analysis_(problem-solving)";
-
 const HINT: &str = "param <name>  ·  (indent) option <value>   — then click one option per row";
 
 const DEFAULT: &str = "\
@@ -222,7 +220,7 @@ pub fn MorpheusTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
+    view! { <ToolShell meta=meta plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]
