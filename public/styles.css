@@ -822,7 +822,8 @@ code {
 /* Issue tree (Ariadne) */
 .issue-tree {
   display: flex;
-  overflow: auto;
+  width: max-content;
+  min-width: 100%;
   padding: 0.5rem;
 }
 .issue-node {
@@ -1958,6 +1959,46 @@ code {
 .tool-head {
   border-bottom: 1px solid var(--border);
   padding-bottom: 0.75rem;
+}
+.plan-picker, .plan-picker form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+.plan-picker {
+  padding-bottom: 0.9rem;
+  font-size: 0.85rem;
+}
+.plan-picker label {
+  color: var(--text-dim);
+}
+.plan-picker input, .plan-picker select, .plan-button {
+  min-height: 2.2rem;
+  max-width: 100%;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-raised);
+  color: var(--text);
+  font: inherit;
+}
+.plan-picker select {
+  max-width: min(100%, 18rem);
+}
+.plan-button {
+  color: var(--accent);
+  cursor: pointer;
+}
+.plan-button:hover {
+  border-color: var(--accent);
+}
+.plan-picker form[hidden], .plan-status:empty {
+  display: none;
+}
+.plan-status {
+  width: 100%;
+  color: var(--text-dim);
 }
 .workspace-switch {
   display: none;

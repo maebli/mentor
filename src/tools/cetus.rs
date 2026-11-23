@@ -327,7 +327,8 @@ fn render(fb: Fishbone) -> AnyView {
 #[component]
 pub fn CetusTool() -> impl IntoView {
     let meta = registry::find("cetus").expect("cetus registered");
-    let text = crate::ui::use_persisted("cetus", DEFAULT);
+    let plans = crate::plans::Plans::open("cetus", DEFAULT);
+    let text = plans.text;
     let parsed = Memo::new(move |_| parse(&text.get()));
     let issues = Signal::derive(move || parsed.get().1);
 
@@ -340,7 +341,7 @@ pub fn CetusTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE text=text left=left right=right /> }
+    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]

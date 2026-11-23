@@ -174,7 +174,8 @@ fn render(model: FiveWhys) -> AnyView {
 #[component]
 pub fn SocratesTool() -> impl IntoView {
     let meta = registry::find("socrates").expect("socrates registered");
-    let text = crate::ui::use_persisted("socrates", DEFAULT);
+    let plans = crate::plans::Plans::open("socrates", DEFAULT);
+    let text = plans.text;
     let parsed = Memo::new(move |_| parse(&text.get()));
     let issues = Signal::derive(move || parsed.get().1);
 
@@ -187,7 +188,7 @@ pub fn SocratesTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE text=text left=left right=right /> }
+    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]

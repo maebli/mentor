@@ -4,6 +4,7 @@
 //! syntax-checked, live visual on the right" experience is identical everywhere.
 
 use crate::dsl::{ParseIssue, Severity};
+use crate::plans::{PlanPicker, Plans};
 use crate::registry::ToolMeta;
 use gloo_storage::{LocalStorage, Storage};
 use js_sys::{Array, Function, Reflect};
@@ -140,35 +141,26 @@ pub fn ToolShell(
     /// Link to a reference explaining the technique (e.g. Wikipedia).
     #[prop(into)]
     reference: String,
-    /// The tool's source text, exported by the "Copy/Save text" buttons.
-    text: RwSignal<String>,
+    plans: Plans,
     /// The editor / left side.
     left: AnyView,
     /// The visual / right side.
     right: AnyView,
 ) -> impl IntoView {
     // The visual is the artifact we rasterise; `.canvas` excludes the toolbar.
+    let text = plans.text;
     let sel = ".pane-visual .canvas";
-    let png_name = format!("{}.png", meta.slug);
-    let txt_name = format!("{}.txt", meta.slug);
-
     let on_copy_png = move |_| copy_png(sel);
-    let on_save_png = {
-        let png_name = png_name.clone();
-        move |_| download_png(sel, &png_name)
-    };
+    let on_save_png = move |_| download_png(sel, &plans.filename("png"));
     let copy_txt = move |_| call_export("copyText", &[JsValue::from_str(&text.get_untracked())]);
-    let save_txt = {
-        let txt_name = txt_name.clone();
-        move |_| {
-            call_export(
-                "downloadText",
-                &[
-                    JsValue::from_str(&text.get_untracked()),
-                    JsValue::from_str(&txt_name),
-                ],
-            )
-        }
+    let save_txt = move |_| {
+        call_export(
+            "downloadText",
+            &[
+                JsValue::from_str(&text.get_untracked()),
+                JsValue::from_str(&plans.filename("txt")),
+            ],
+        )
     };
 
     let show_preview = RwSignal::new(false);
@@ -186,6 +178,7 @@ pub fn ToolShell(
                 <h1>{meta.title}</h1>
                 <p class="tool-tagline">{meta.tagline}</p>
             </div>
+            <PlanPicker plans=plans />
             <div class="workspace-switch" role="group" aria-label="Workspace view">
                 <button aria-pressed=move || (!show_preview.get()).to_string() on:click=move |_| show_preview.set(false)>"Edit source"</button>
                 <button aria-pressed=move || show_preview.get().to_string() on:click=move |_| show_preview.set(true)>"View diagram"</button>
@@ -227,10 +220,6 @@ pub fn EditorPane(
     let line_count = Memo::new(move |_| text.get().matches('\n').count() + 1);
     let highlighted = move || highlight_html(&text.get(), keywords);
 
-    // Tab inserts two spaces (the DSL's indentation unit) instead of moving
-    // focus. `set_range_text` edits the value and caret natively; the textarea is
-    // uncontrolled (initial value only) so updating the signal won't reset the
-    // caret.
     let leave_editor = RwSignal::new(false);
     let on_keydown = move |ev: web_sys::KeyboardEvent| {
         let tab_moves_focus = leave_editor.get_untracked();
@@ -283,7 +272,7 @@ pub fn EditorPane(
                         wrap="off"
                         autocomplete="off"
                         autocapitalize="off"
-                        prop:value=text.get_untracked()
+                        prop:value=move || text.get()
                         on:input=move |ev| text.set(event_target_value(&ev))
                         on:blur=move |_| leave_editor.set(false)
                         on:keydown=on_keydown

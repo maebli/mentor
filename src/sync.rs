@@ -93,6 +93,16 @@ fn gather_files() -> Vec<(String, String)> {
                 files.push((format!("mentor/{}.txt", tool.slug), text));
             }
         }
+        let plans: std::collections::BTreeMap<_, _> = crate::plans::names(tool.slug)
+            .into_iter()
+            .filter_map(|name| crate::plans::read(tool.slug, &name).map(|text| (name, text)))
+            .collect();
+        if !plans.is_empty() {
+            files.push((
+                format!("mentor/{}.plans.json", tool.slug),
+                json!(plans).to_string(),
+            ));
+        }
     }
     // The CRC board stores raw JSON under its own key (not double-encoded).
     if let Ok(board) = LocalStorage::get::<Value>("crc-board") {
@@ -290,7 +300,7 @@ pub fn GitHubPanel() -> impl IntoView {
                 None => view! {
                     <div class="gh-body">
                         <p class="gh-note">
-                            "Commit your tools' text to a repo of your own. Your GitHub token stays in this browser."
+                            "Commit your original plans and named copies to a repo of your own. Your GitHub token stays in this browser."
                         </p>
                         <button class="gh-btn" on:click=move |_| connect()>"Connect GitHub"</button>
                     </div>
@@ -301,7 +311,7 @@ pub fn GitHubPanel() -> impl IntoView {
                         <p class="gh-note">
                             "Connected"
                             {move || user.get().map(|u| format!(" as {u}")).unwrap_or_default()}
-                            ". Pick a repo you've installed the app on, then commit."
+                            ". Pick a repo to commit all original plans and named copies."
                         </p>
                         <div class="gh-row">
                             <input

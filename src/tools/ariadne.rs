@@ -151,7 +151,8 @@ fn render_node(node: &Node) -> AnyView {
 #[component]
 pub fn AriadneTool() -> impl IntoView {
     let meta = registry::find("ariadne").expect("ariadne registered");
-    let text = crate::ui::use_persisted("ariadne", DEFAULT);
+    let plans = crate::plans::Plans::open("ariadne", DEFAULT);
+    let text = plans.text;
     let parsed = Memo::new(move |_| parse(&text.get()));
     let issues = Signal::derive(move || parsed.get().1);
 
@@ -164,7 +165,7 @@ pub fn AriadneTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE text=text left=left right=right /> }
+    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]
