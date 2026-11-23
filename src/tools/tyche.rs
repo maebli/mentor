@@ -11,8 +11,6 @@ use crate::registry;
 use crate::ui::{EditorPane, ToolShell};
 use leptos::prelude::*;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/Convolution_of_probability_distributions";
-
 const HINT: &str =
     "unit: days · verb: take · 4-7 range · up to 5 (or ~5) · 1 or 2 @ 25% · 3 fixed";
 
@@ -561,7 +559,7 @@ pub fn TycheTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
+    view! { <ToolShell meta=meta plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]

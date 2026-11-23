@@ -5,8 +5,6 @@ use crate::registry;
 use crate::ui::{EditorPane, ToolShell};
 use leptos::prelude::*;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/Reference_class_forecasting";
-
 const HINT: &str = "question: <what>  ·  unit: <weeks>  ·  estimate: <n>  ·  case: <label> <n>";
 
 const DEFAULT: &str = "\
@@ -347,7 +345,7 @@ pub fn PythiaTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
+    view! { <ToolShell meta=meta plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]

@@ -19,8 +19,6 @@ use crate::registry;
 use crate::ui::{EditorPane, ToolShell};
 use leptos::prelude::*;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/Ishikawa_diagram";
-
 const HINT: &str =
     "effect: <problem>  ·  category <Name>  ·  (indent) cause: <text>  ·  (indent×2) cause: <sub-cause>";
 
@@ -341,7 +339,7 @@ pub fn CetusTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
+    view! { <ToolShell meta=meta plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]

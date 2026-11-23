@@ -11,8 +11,6 @@
 use crate::registry;
 use leptos::prelude::*;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/Class-responsibility-collaboration_card";
-
 #[component]
 pub fn AgoraTool() -> impl IntoView {
     let meta = registry::find("agora").expect("agora registered");
@@ -25,8 +23,8 @@ pub fn AgoraTool() -> impl IntoView {
                     <h1>{meta.greek}</h1>
                     <span class="technique">{meta.title}</span>
                 </div>
-                <a class="reference" href=REFERENCE target="_blank" rel="noreferrer">
-                    "reference ↗"
+                <a class="reference" href=meta.wikipedia_url() target="_blank" rel="noreferrer">
+                    "Wikipedia ↗"
                 </a>
             </header>
             // `src` is relative so it resolves against the document base in both

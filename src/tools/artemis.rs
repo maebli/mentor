@@ -11,8 +11,6 @@ use crate::registry;
 use crate::ui::{EditorPane, ToolShell};
 use leptos::prelude::*;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/SMART_criteria";
-
 const HINT: &str =
     "goal <Title>  ·  (indent) specific | measurable | achievable | relevant | time: <text>";
 
@@ -562,7 +560,7 @@ pub fn ArtemisTool() -> impl IntoView {
     }
     .into_any();
 
-    view! { <ToolShell meta=meta reference=REFERENCE plans=plans left=left right=right /> }
+    view! { <ToolShell meta=meta plans=plans left=left right=right /> }
 }
 
 #[cfg(test)]

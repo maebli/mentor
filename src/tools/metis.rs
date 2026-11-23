@@ -4,8 +4,6 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use leptos::prelude::*;
 
-const REFERENCE: &str = "https://en.wikipedia.org/wiki/Heuristic";
-
 const CATEGORIES: [&str; 5] = [
     "Mental Models",
     "Uncertainty & Risk",
@@ -341,6 +339,7 @@ fn card(heuristic: &'static Heuristic) -> impl IntoView {
 
 #[component]
 pub fn MetisPage() -> impl IntoView {
+    let meta = crate::registry::find("metis").expect("metis registered");
     let query = RwSignal::new(String::new());
 
     let results = move || {
@@ -404,8 +403,8 @@ pub fn MetisPage() -> impl IntoView {
                 <a class="back" href="#/">"← Mentor"</a>
                 <h1>"🦉 Metis"</h1>
                 <p>"Rules of thumb for design and thinking."</p>
-                <a class="reference" href=REFERENCE target="_blank" rel="noreferrer">
-                    "reference ↗"
+                <a class="reference" href=meta.wikipedia_url() target="_blank" rel="noreferrer">
+                    "Wikipedia ↗"
                 </a>
                 <input
                     class="search"
