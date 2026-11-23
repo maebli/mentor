@@ -26,15 +26,15 @@ impl Category {
 
     pub fn title(self) -> &'static str {
         match self {
-            Category::Design => "Design & Architecture",
-            Category::ProblemSolving => "Problem Solving & Root Cause",
-            Category::Decision => "Decision & Foresight",
+            Category::Design => "Design",
+            Category::ProblemSolving => "Problem solving",
+            Category::Decision => "Decisions",
             Category::Reference => "Reference",
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct ToolMeta {
     /// URL slug (also the localStorage namespace). Lives after `#/`.
     pub slug: &'static str,
@@ -77,7 +77,7 @@ pub fn tools() -> &'static [ToolMeta] {
             slug: "agora",
             greek: "Agora",
             title: "CRC Card Board",
-            tagline: "Draggable Class · Responsibility · Collaborator cards for object design.",
+            tagline: "Map classes, their responsibilities, and the collaborators they depend on.",
             glyph: "🏛️",
             category: Category::Design,
             tags: &["crc", "class", "responsibility", "collaborator", "oop", "cards", "board"],
@@ -95,7 +95,7 @@ pub fn tools() -> &'static [ToolMeta] {
             slug: "ariadne",
             greek: "Ariadne",
             title: "Issue Tree",
-            tagline: "Decompose a question into a MECE tree of sub-issues.",
+            tagline: "Break a question into smaller questions and see how they fit together.",
             glyph: "🧵",
             category: Category::ProblemSolving,
             tags: &["issue", "tree", "mece", "logic", "decomposition", "hypothesis"],
@@ -167,7 +167,7 @@ pub fn tools() -> &'static [ToolMeta] {
             slug: "tyche",
             greek: "Tyche",
             title: "Probabilistic Estimate",
-            tagline: "Model each task as an uncertain range, then convolve them into one total with confidence intervals.",
+            tagline: "Combine uncertain task estimates into a range for the whole project.",
             glyph: "🎲",
             category: Category::Decision,
             tags: &[

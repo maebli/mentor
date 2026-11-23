@@ -27,6 +27,7 @@ pub fn App() -> impl IntoView {
     // this function, so we leak its handle for the lifetime of the page.
     let handle = window_event_listener(leptos::ev::hashchange, move |_| {
         slug.set(current_slug());
+        window().scroll_to_with_x_and_y(0.0, 0.0);
     });
     std::mem::forget(handle);
 
@@ -34,6 +35,14 @@ pub fn App() -> impl IntoView {
         <div class="app">
             {move || {
                 let s = slug.get();
+                let title = match s.as_str() {
+                    "" => "Mentor · Visual planning tools".to_owned(),
+                    slug => crate::registry::find(slug).map_or_else(
+                        || "Tool not found · Mentor".to_owned(),
+                        |tool| format!("{} · Mentor", tool.title),
+                    ),
+                };
+                document().set_title(&title);
                 match s.as_str() {
                     "" => view! { <Home /> }.into_any(),
                     other => tools::route(other),

@@ -52,7 +52,7 @@ fn highlight_line(line: &str, keywords: &[&str]) -> String {
         .map(|(i, _)| i)
         .unwrap_or(rest.len());
     let (token, after) = rest.split_at(end);
-    if !token.is_empty() && (keywords.iter().any(|k| *k == token) || is_discipline(token)) {
+    if !token.is_empty() && (keywords.contains(&token) || is_discipline(token)) {
         s.push_str("<span class=\"hl-keyword\">");
         s.push_str(&esc(token));
         s.push_str("</span>");
@@ -85,12 +85,18 @@ fn call_export(method: &str, args: &[JsValue]) {
         Some(w) => w.into(),
         None => return,
     };
-    let Ok(obj) = Reflect::get(&win, &JsValue::from_str("MentorExport")) else { return };
+    let Ok(obj) = Reflect::get(&win, &JsValue::from_str("MentorExport")) else {
+        return;
+    };
     if obj.is_undefined() || obj.is_null() {
         return;
     }
-    let Ok(func) = Reflect::get(&obj, &JsValue::from_str(method)) else { return };
-    let Ok(func) = func.dyn_into::<Function>() else { return };
+    let Ok(func) = Reflect::get(&obj, &JsValue::from_str(method)) else {
+        return;
+    };
+    let Ok(func) = func.dyn_into::<Function>() else {
+        return;
+    };
     let arr = Array::new();
     for a in args {
         arr.push(a);
@@ -117,8 +123,7 @@ pub fn download_png(selector: &str, filename: &str) {
 /// is whatever was stored, falling back to `default`.
 pub fn use_persisted(key: &'static str, default: &str) -> RwSignal<String> {
     let storage_key = format!("mentor:{key}");
-    let initial: String =
-        LocalStorage::get(&storage_key).unwrap_or_else(|_| default.to_string());
+    let initial: String = LocalStorage::get(&storage_key).unwrap_or_else(|_| default.to_string());
     let sig = RwSignal::new(initial);
     Effect::new(move |_| {
         let value = sig.get();
@@ -166,24 +171,30 @@ pub fn ToolShell(
         }
     };
 
+    let show_preview = RwSignal::new(false);
+
     view! {
-        <div class="tool">
+        <main class="tool" class:preview-open=move || show_preview.get()>
             <header class="tool-head">
-                <a class="back" href="#/">"← Mentor"</a>
-                <div class="tool-title">
-                    <span class="glyph">{meta.glyph}</span>
-                    <h1>{meta.greek}</h1>
-                    <span class="technique">{meta.title}</span>
-                </div>
+                <a class="back" href="#/">"← Tool library"</a>
                 <a class="reference" href=reference target="_blank" rel="noreferrer">
-                    "reference ↗"
+                    "Method reference ↗"
                 </a>
             </header>
-            <p class="tool-tagline">{meta.tagline}</p>
+            <div class="workspace-title">
+                <span class="technique">{meta.greek}" / "{meta.category.title()}</span>
+                <h1>{meta.title}</h1>
+                <p class="tool-tagline">{meta.tagline}</p>
+            </div>
+            <div class="workspace-switch" role="group" aria-label="Workspace view">
+                <button aria-pressed=move || (!show_preview.get()).to_string() on:click=move |_| show_preview.set(false)>"Edit source"</button>
+                <button aria-pressed=move || show_preview.get().to_string() on:click=move |_| show_preview.set(true)>"View diagram"</button>
+            </div>
             <div class="split">
-                <section class="pane pane-text">{left}</section>
-                <section class="pane pane-visual">
+                <section class="pane pane-text" aria-label="Source editor">{left}</section>
+                <section class="pane pane-visual" aria-label="Live diagram">
                     <div class="export-bar">
+                        <h2>"Live diagram"</h2>
                         <button class="exp" on:click=on_copy_png title="Copy the diagram to the clipboard as a PNG image">"Copy PNG"</button>
                         <button class="exp" on:click=on_save_png title="Download the diagram as a PNG image">"Save PNG"</button>
                         <span class="exp-sep"></span>
@@ -193,7 +204,7 @@ pub fn ToolShell(
                     {right}
                 </section>
             </div>
-        </div>
+        </main>
     }
 }
 
@@ -220,8 +231,11 @@ pub fn EditorPane(
     // focus. `set_range_text` edits the value and caret natively; the textarea is
     // uncontrolled (initial value only) so updating the signal won't reset the
     // caret.
+    let leave_editor = RwSignal::new(false);
     let on_keydown = move |ev: web_sys::KeyboardEvent| {
-        if ev.key() == "Tab" {
+        let tab_moves_focus = leave_editor.get_untracked();
+        leave_editor.set(ev.key() == "Escape");
+        if ev.key() == "Tab" && !ev.shift_key() && !tab_moves_focus {
             ev.prevent_default();
             if let Some(ta) = ta_ref.get() {
                 let start = ta.selection_start().ok().flatten().unwrap_or(0);
@@ -247,9 +261,10 @@ pub fn EditorPane(
 
     view! {
         <div class="editor">
+            <h2 class="pane-heading">"Source editor"</h2>
             <div class="editor-hint">{syntax_hint}</div>
             <div class="editor-main">
-                <div class="gutter" node_ref=gutter_ref>
+                <div class="gutter" aria-hidden="true" node_ref=gutter_ref>
                     {move || {
                         (1..=line_count.get())
                             .map(|n| view! { <div class="ln">{n}</div> })
@@ -261,6 +276,8 @@ pub fn EditorPane(
                     <pre class="highlight" node_ref=hl_ref aria-hidden="true" inner_html=highlighted></pre>
                     <textarea
                         class="editor-area"
+                        aria-label="Diagram source"
+                        aria-describedby="editor-keys"
                         node_ref=ta_ref
                         spellcheck="false"
                         wrap="off"
@@ -268,11 +285,13 @@ pub fn EditorPane(
                         autocapitalize="off"
                         prop:value=text.get_untracked()
                         on:input=move |ev| text.set(event_target_value(&ev))
+                        on:blur=move |_| leave_editor.set(false)
                         on:keydown=on_keydown
                         on:scroll=on_scroll
                     ></textarea>
                 </div>
             </div>
+            <span id="editor-keys" class="editor-keys">"Tab to indent · Esc then Tab to move focus"</span>
             <IssueList issues=issues />
         </div>
     }
